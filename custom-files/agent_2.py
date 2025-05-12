@@ -47,6 +47,7 @@ class Policy(torch.nn.Module):
         for m in self.modules():
             if type(m) is torch.nn.Linear:
                 torch.nn.init.normal_(m.weight)
+                #torch.nn.init.xavier_uniform_(m.weight)
                 torch.nn.init.zeros_(m.bias)
 
 
@@ -59,6 +60,7 @@ class Policy(torch.nn.Module):
         action_mean = self.fc3_actor_mean(x_actor)
 
         sigma = self.sigma_activation(self.sigma)
+        sigma = torch.clamp(sigma, min=1e-3, max=2.0)   # added in step 2
         normal_dist = Normal(action_mean, sigma)
 
 
@@ -96,7 +98,12 @@ class Agent(object):
         discounted_returns = discount_rewards(rewards, self.gamma)
 
         # Normalize returns
-        discounted_returns = (discounted_returns - discounted_returns.mean()) / (discounted_returns.std() + 1e-8)
+        #discounted_returns = (discounted_returns - discounted_returns.mean()) / (discounted_returns.std() + 1e-8)
+        std = discounted_returns.std()
+        if std.item() > 1e-6:
+            discounted_returns = (discounted_returns - discounted_returns.mean()) / (std + 1e-8)
+        else:
+            discounted_returns = discounted_returns - discounted_returns.mean()
 
         # REINFORCE loss
         loss = -torch.sum(action_log_probs * discounted_returns)
