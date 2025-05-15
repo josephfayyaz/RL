@@ -19,4 +19,4 @@ for _ in range(10):  # Reduced for testing
     img = Image.fromarray(np.flipud(rgb))  # Flip vertically
     img.save("frame.png")
 
-print("paras")
+print("parastoo")
