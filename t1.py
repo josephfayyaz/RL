@@ -18,3 +18,5 @@ for _ in range(10):  # Reduced for testing
     rgb = viewer.read_pixels(640, 480, depth=False)
     img = Image.fromarray(np.flipud(rgb))  # Flip vertically
     img.save("frame.png")
+
+print("parastoo")
