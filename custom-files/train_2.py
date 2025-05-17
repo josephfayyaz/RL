@@ -71,7 +71,7 @@ def main():
             print('Training episode:', episode)
             print('Episode return:', train_reward)
 
-    torch.save(agent.policy.state_dict(), "model-5-custom-saghal.mdl")
+    torch.save(agent.policy.state_dict(), "model-normal/model-5-custom-saghal.mdl")
 
 
 if __name__ == '__main__':
