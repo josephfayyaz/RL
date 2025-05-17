@@ -6,7 +6,8 @@ import argparse
 import torch
 import gym
 
-from env.custom_hopper import *
+# from env.custom_hopper import *
+from env.custom_hopper_saghal import *
 from agent_2 import Agent, Policy
 
 
@@ -15,17 +16,17 @@ from agent_2 import Agent, Policy
 #     parser.add_argument('--n-episodes', default=100000, type=int, help='Number of training episodes')
 #     parser.add_argument('--print-every', default=20000, type=int, help='Print info every <> episodes')
 #     parser.add_argument('--device', default='cpu', type=str, help='network device [cpu, cuda]')
-#
+#     parser.add_argument('--algorithm', default='reinforce', type=str, choices=['reinforce', 'reinforce_baseline', 'actor_critic'], help='Algorithm to use for training [reinforce, reinforce_baseline]')
 #     return parser.parse_args()
 #
 #
 # args = parse_args()
 #
 
-N_episodes = 25000
+N_episodes = 10000
 print_time = 500
 device = "cuda"
-
+main_algorithm= 'reinforce_baseline'
 
 def main():
     env = gym.make('CustomHopper-source-v0')
@@ -63,14 +64,16 @@ def main():
             agent.store_outcome(previous_state, state, action_probabilities, reward, done)
 
             train_reward += reward
-            agent.update_policy()  # This line added
+
+        agent.update_policy(main_algorithm)  # This line added
 
         if (episode + 1) % print_time == 0:
             print('Training episode:', episode)
             print('Episode return:', train_reward)
 
-    torch.save(agent.policy.state_dict(), "model-2.mdl")
+    torch.save(agent.policy.state_dict(), "model-5-custom-saghal.mdl")
 
 
 if __name__ == '__main__':
     main()
+

@@ -1,6 +1,5 @@
 """Test an RL agent on the OpenAI Gym Hopper environment"""
 import argparse
-
 import torch
 import gym
 

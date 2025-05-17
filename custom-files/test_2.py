@@ -20,7 +20,7 @@ from agent_2 import Agent, Policy
 #
 # args = parse_args()
 
-model= "/home/joseph/python-proj/1/custom-files/model-2.mdl"
+model= "/home/joseph/python-proj/1/custom-files/model-5-custom-saghal.mdl"
 device= "cuda"
 render= "True"
 episodes= 100
