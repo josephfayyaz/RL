@@ -30,7 +30,9 @@ class Policy(torch.nn.Module):
         
         # Learned standard deviation for exploration at training time 
         self.sigma_activation = F.softplus
-        init_sigma = 0.5
+
+        # init_sigma = 0.5
+        init_sigma = 1
         self.sigma = torch.nn.Parameter(torch.zeros(self.action_space)+init_sigma)
 
 
@@ -83,8 +85,8 @@ class Agent(object):
     def __init__(self, policy, device='cuda'):
         self.train_device = device
         self.policy = policy.to(self.train_device)
-        # self.optimizer = torch.optim.Adam(policy.parameters(), lr=1e-3)
-        self.optimizer = torch.optim.Adam(policy.parameters(), lr=1e-4)
+        self.optimizer = torch.optim.Adam(policy.parameters(), lr=1e-3)
+        # self.optimizer = torch.optim.Adam(policy.parameters(), lr=1e-4)
 
         self.gamma = 0.99
         self.baseline = 20.0

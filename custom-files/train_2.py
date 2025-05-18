@@ -23,10 +23,10 @@ from agent_2 import Agent, Policy
 # args = parse_args()
 #
 
-N_episodes = 10000
+N_episodes = 50000
 print_time = 500
 device = "cuda"
-main_algorithm= 'reinforce_baseline'
+main_algorithm= 'actor_critic'
 
 def main():
     env = gym.make('CustomHopper-source-v0')
@@ -70,8 +70,8 @@ def main():
         if (episode + 1) % print_time == 0:
             print('Training episode:', episode)
             print('Episode return:', train_reward)
-
-    torch.save(agent.policy.state_dict(), "model-normal/model-5-custom-saghal.mdl")
+            print('Position after episode:', env.sim.data.qpos[0])  # ← track movement
+    torch.save(agent.policy.state_dict(), "model-normal/model-6.mdl")
 
 
 if __name__ == '__main__':

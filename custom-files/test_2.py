@@ -20,10 +20,10 @@ from agent_2 import Agent, Policy
 #
 # args = parse_args()
 
-model= "/home/joseph/python-proj/1/custom-files/model-5-custom-saghal.mdl"
+model= "/home/joseph/python-proj/1/custom-files/model-normal/model-6.mdl"
 device= "cuda"
 render= "True"
-episodes= 100
+episodes= 30
 
 
 
@@ -45,8 +45,9 @@ def main():
 
     for episode in range(episodes):
         done = False
-        test_reward = 0
+        test_reward = 1
         state = env.reset()
+
 
         while not done:
 

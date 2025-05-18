@@ -90,7 +90,12 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
 
 
     def viewer_setup(self):
-        self.viewer.cam.trackbodyid = 2
+        # self.viewer.cam.trackbodyid = 2
+        # self.viewer.cam.distance = self.model.stat.extent * 0.75
+        # self.viewer.cam.lookat[2] = 1.15
+        # self.viewer.cam.elevation = -20
+        torso_id = self.model.body_name2id('torso')  # ✅ get correct ID by name
+        self.viewer.cam.trackbodyid = torso_id
         self.viewer.cam.distance = self.model.stat.extent * 0.75
         self.viewer.cam.lookat[2] = 1.15
         self.viewer.cam.elevation = -20
