@@ -6,7 +6,7 @@
 """
 
 import gym
-from env.custom_hopper import *
+from env.custom_hopper_saghal import *
 import os
 import argparse
 from stable_baselines3 import PPO
@@ -24,7 +24,7 @@ from stable_baselines3.common.callbacks import CheckpointCallback, EvalCallback
 
 # args = parse_args()
 
-N_episodes = 2000
+N_episodes = 300000
 print_time = 500
 device = "cuda"
 main_algorithm= 'PPO'
@@ -35,7 +35,7 @@ def train_agent(algo, env_id, total_timesteps, save_path, log_path):
 
     model = PPO('MlpPolicy', env, verbose=1, tensorboard_log=log_path)
 
-    checkpoint_callback = CheckpointCallback(save_freq=1000, save_path=save_path,
+    checkpoint_callback = CheckpointCallback(save_freq=10000, save_path=save_path,
                                              name_prefix='rl_model')
 
     eval_env = gym.make(env_id)
