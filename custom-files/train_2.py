@@ -23,8 +23,8 @@ from agent_2 import Agent, Policy
 # args = parse_args()
 #
 
-N_episodes = 1000000
-print_time = 500
+N_episodes = 100000
+print_time = 1000
 device = "cuda"
 main_algorithm= 'actor_critic'
 
@@ -71,7 +71,7 @@ def main():
             print('Training episode:', episode)
             print('Episode return:', train_reward)
             print('Position after episode:', env.sim.data.qpos[0])  # ← track movement
-    torch.save(agent.policy.state_dict(), "model-normal/model-7-100k.mdl")
+    torch.save(agent.policy.state_dict(), "models-parastoo/actor_critic-saghal-100k.mdl")
 
 
 if __name__ == '__main__':

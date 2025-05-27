@@ -4,7 +4,7 @@ import argparse
 import torch
 import gym
 
-from env.custom_hopper import *
+from env.custom_hopper_saghal import *
 from agent_2 import Agent, Policy
 
 
@@ -20,7 +20,7 @@ from agent_2 import Agent, Policy
 #
 # args = parse_args()
 
-model= "/home/parastoo/Desktop/RL/custom-files/model-normal/model-6.mdl"
+model= "/home/parastoo/Desktop/RL/custom-files/models-parastoo/actor_critic-saghal-100k.mdl"
 device= "cuda"
 render= "True"
 episodes= 30
