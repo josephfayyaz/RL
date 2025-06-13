@@ -1,10 +1,9 @@
 """Implementation of the Hopper environment supporting
 domain randomization optimization.
-
-    See more at: https://www.gymlibrary.dev/environments/mujoco/hopper/
 """
-from copy import deepcopy
 
+
+from copy import deepcopy
 import numpy as np
 import gym
 from gym import utils

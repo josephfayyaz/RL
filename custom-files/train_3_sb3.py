@@ -51,7 +51,7 @@ if __name__ == "__main__":
     ALGO = main_algorithm
     ENV_ID = 'CustomHopper-source-v0'  # Change to your specific environment
     TIMESTEPS = N_episodes
-    SAVE_PATH = './modelsPPO/'
+    SAVE_PATH = 'Models/modelsPPO/'
     LOG_PATH = './logs/'
 
     os.makedirs(SAVE_PATH, exist_ok=True)

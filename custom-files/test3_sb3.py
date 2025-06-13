@@ -6,13 +6,16 @@ from stable_baselines3 import PPO
 import argparse
 
 # Import your custom environment if necessary
+# from env.custom_hopper import *
+# from env.custom_hopper_saghal import *
 from env.custom_hopper import *
+
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     # parser.add_argument('--model', default=None, type=str, help='Model path')
-    parser.add_argument('--model', default='/home/parastoo/Desktop/RL/custom-files/modelsPPO/best_model.zip',
+    parser.add_argument('--model', default='/home/joseph/python-proj/1/custom-files/modelsPPO/PPO_final_model.zip',
                         type=str, help='Model path')
 
     parser.add_argument('--device', default='cuda', type=str, help='network device [cpu, cuda]')
@@ -26,7 +29,7 @@ def parse_args():
 args = parse_args()
 
 
-def test_saved_model(algo, env_id, model_path, num_episodes=10):
+def test_saved_model(algo, env_id, model_path, num_episodes=1000):
     env = gym.make(env_id)
 
     # Load the trained model
@@ -50,6 +53,6 @@ if __name__ == "__main__":
     ALGO = args.algorithm
     ENV_ID = 'CustomHopper-target-v0'  # Change to your specific environment
     MODEL_PATH = args.model  # './models/PPO_final_model.zip'  # Change to the path of your saved model
-    NUM_EPISODES = 200  # Number of episodes to test the agent
+    NUM_EPISODES = 2000  # Number of episodes to test the agent
 
     test_saved_model(ALGO, ENV_ID, MODEL_PATH, NUM_EPISODES)
