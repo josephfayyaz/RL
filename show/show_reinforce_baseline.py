@@ -1,9 +1,11 @@
 """Test an RL agent on the OpenAI Gym Hopper environment"""
-
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import torch
 from env.custom_hopper import *
-from agents.agent_baseline import Agent_states as Agent, Policy_states as Policy , BaselineNetwork
+from agents.agent_baseline import Agent, Policy
 
 
 # def parse_args():
@@ -18,7 +20,7 @@ from agents.agent_baseline import Agent_states as Agent, Policy_states as Policy
 #
 # args = parse_args()
 
-model= "/home/joseph/python-proj/1/custom-files/Models/model_reinforce_baseline/model_reinforce_baseline_2_100K.mdl"
+model= "/home/joseph/python-proj/1/Models/reinforce_baseline/model_reinforce_baseline_1_100K.mdl"
 device= "cuda"
 render= "True"
 episodes= 100
@@ -37,12 +39,11 @@ def main():
     action_space_dim = env.action_space.shape[-1]
 
     policy = Policy(observation_space_dim, action_space_dim)
-    baseline_network = BaselineNetwork(observation_space_dim)
-    # Load only the policy weights (you trained and saved only the policy)
     policy.load_state_dict(torch.load(model), strict=True)
+    agent = Agent(policy, device= device)
+    # Load only the policy weights (you trained and saved only the policy)
 
     # Construct the agent with both
-    agent = Agent(policy, baseline_network , device=device)
     # agent = Agent(policy, baseline_network,device="cuda")
     for episode in range(episodes):
         done = False

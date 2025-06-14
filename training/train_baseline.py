@@ -64,7 +64,7 @@ def main():
     start = timer()
 
     # CSV Logging
-    training_csv = open("Logs/baseline/training_baseline_100K_UDR_log.csv", "w", newline="")
+    training_csv = open("../Logs/baseline/training_baseline_100K_UDR_log.csv", "w", newline="")
     train_writer = csv.writer(training_csv)
     train_writer.writerow(["timestep", "mean_reward", "std_reward", "steps_to_1000_return"])
 
@@ -74,6 +74,8 @@ def main():
         state, reward, done, _ = env.step(action.detach().cpu().numpy())
 
         agent.store_outcome(previous_state, state, action_probabilities, reward, done)
+        print('Training episode:', total_timesteps)
+
         train_reward += reward
         total_timesteps += 1
 

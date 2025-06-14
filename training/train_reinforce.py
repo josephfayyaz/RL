@@ -75,6 +75,8 @@ def main():
         state, reward, done, _ = env.step(action.detach().cpu().numpy())
 
         agent.store_outcome(previous_state, state, action_probabilities, reward, done)
+        print('Training episode:', total_timesteps)
+
         train_reward += reward
         total_timesteps += 1
 
