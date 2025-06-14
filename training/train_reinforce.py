@@ -47,8 +47,8 @@ def main():
     wandb.run.name = "Reinforce_Baseline_Run"
     wandb.run.save()
 
-    env = gym.make(config["env_id"])
-    env_target = gym.make(config["env_id"])
+    env = gym.make(config["env_id_source"])
+    env_target = gym.make(config["env_id_target"])
 
     observation_space_dim = env.observation_space.shape[-1]
     action_space_dim = env.action_space.shape[-1]
