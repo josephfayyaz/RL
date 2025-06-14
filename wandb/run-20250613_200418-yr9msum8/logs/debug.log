@@ -1,0 +1,36 @@
+2025-06-13 20:04:18,390 INFO    Thread-8  :21431 [wandb_setup.py:_flush():76] Current SDK version is 0.16.6
+2025-06-13 20:04:18,390 INFO    Thread-8  :21431 [wandb_setup.py:_flush():76] Configure stats pid to 21431
+2025-06-13 20:04:18,390 INFO    Thread-8  :21431 [wandb_setup.py:_flush():76] Loading settings from /home/joseph/.config/wandb/settings
+2025-06-13 20:04:18,390 INFO    Thread-8  :21431 [wandb_setup.py:_flush():76] Loading settings from /home/joseph/python-proj/1/custom-files/PPO/wandb/settings
+2025-06-13 20:04:18,390 INFO    Thread-8  :21431 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'project': 'ppo_sweep_ss__5', 'entity': 'yousef-f3-politecnico-di-torino', 'root_dir': '/home/joseph/python-proj/1/custom-files/PPO', 'run_id': 'yr9msum8', 'sweep_param_path': '/home/joseph/python-proj/1/custom-files/PPO/wandb/sweep-trm8h9dg/config-yr9msum8.yaml', 'sweep_id': 'trm8h9dg'}
+2025-06-13 20:04:18,390 INFO    Thread-8  :21431 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2025-06-13 20:04:18,390 INFO    Thread-8  :21431 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'custom-files/PPO/PPO_Train.py', 'program_abspath': '/home/joseph/python-proj/1/custom-files/PPO/PPO_Train.py', 'program': 'PPO_Train.py'}
+2025-06-13 20:04:18,391 INFO    Thread-8  :21431 [wandb_setup.py:_flush():76] Applying login settings: {}
+2025-06-13 20:04:18,391 INFO    Thread-8  :21431 [wandb_init.py:_log_setup():521] Logging user logs to /home/joseph/python-proj/1/custom-files/PPO/wandb/run-20250613_200418-yr9msum8/logs/debug.log
+2025-06-13 20:04:18,391 INFO    Thread-8  :21431 [wandb_init.py:_log_setup():522] Logging internal logs to /home/joseph/python-proj/1/custom-files/PPO/wandb/run-20250613_200418-yr9msum8/logs/debug-internal.log
+2025-06-13 20:04:18,391 INFO    Thread-8  :21431 [wandb_init.py:init():561] calling init triggers
+2025-06-13 20:04:18,391 INFO    Thread-8  :21431 [wandb_init.py:init():568] wandb.init called with sweep_config: {'batch_size': 75, 'gae_lambda': 0.9970783069680812, 'gamma': 0.9337442569785808, 'learning_rate': 8.234655384179927e-05, 'n_epochs': 16}
+config: {'method': 'random', 'metric': {'name': 'mean_mean_reward', 'goal': 'maximize'}, 'parameters': {'learning_rate': {'min': 3e-05, 'max': 0.003}, 'gamma': {'min': 0.9, 'max': 0.9999}, 'batch_size': {'min': 32, 'max': 128}, 'n_epochs': {'min': 5, 'max': 20}, 'gae_lambda': {'min': 0.85, 'max': 0.999}}}
+2025-06-13 20:04:18,391 INFO    Thread-8  :21431 [wandb_init.py:init():611] starting backend
+2025-06-13 20:04:18,391 INFO    Thread-8  :21431 [wandb_init.py:init():615] setting up manager
+2025-06-13 20:04:18,395 INFO    Thread-8  :21431 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2025-06-13 20:04:18,395 INFO    Thread-8  :21431 [wandb_init.py:init():623] backend started and connected
+2025-06-13 20:04:18,403 INFO    Thread-8  :21431 [wandb_run.py:_config_callback():1347] config_cb None None {'batch_size': 75, 'gae_lambda': 0.9970783069680812, 'gamma': 0.9337442569785808, 'learning_rate': 8.234655384179927e-05, 'n_epochs': 16}
+2025-06-13 20:04:18,406 INFO    Thread-8  :21431 [wandb_init.py:init():715] updated telemetry
+2025-06-13 20:04:18,443 INFO    Thread-8  :21431 [wandb_init.py:init():748] communicating run to backend with 90.0 second timeout
+2025-06-13 20:04:18,858 INFO    Thread-8  :21431 [wandb_run.py:_on_init():2357] communicating current version
+2025-06-13 20:04:18,913 INFO    Thread-8  :21431 [wandb_run.py:_on_init():2366] got version response upgrade_message: "wandb version 0.20.1 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2025-06-13 20:04:18,913 INFO    Thread-8  :21431 [wandb_init.py:init():799] starting run threads in backend
+2025-06-13 20:04:20,729 INFO    Thread-8  :21431 [wandb_run.py:_console_start():2335] atexit reg
+2025-06-13 20:04:20,729 INFO    Thread-8  :21431 [wandb_run.py:_redirect():2190] redirect: wrap_raw
+2025-06-13 20:04:20,730 INFO    Thread-8  :21431 [wandb_run.py:_redirect():2255] Wrapping output streams.
+2025-06-13 20:04:20,730 INFO    Thread-8  :21431 [wandb_run.py:_redirect():2280] Redirects installed.
+2025-06-13 20:04:20,730 INFO    Thread-8  :21431 [wandb_init.py:init():842] run started, returning control to user process
+2025-06-13 20:39:13,605 INFO    Thread-8  :21431 [wandb_run.py:_finish():2064] finishing run yousef-f3-politecnico-di-torino/ppo_sweep_ss__5/yr9msum8
+2025-06-13 20:39:13,605 INFO    Thread-8  :21431 [wandb_run.py:_atexit_cleanup():2304] got exitcode: 0
+2025-06-13 20:39:13,605 INFO    Thread-8  :21431 [wandb_run.py:_restore():2287] restore
+2025-06-13 20:39:13,605 INFO    Thread-8  :21431 [wandb_run.py:_restore():2293] restore done
+2025-06-13 20:39:18,930 INFO    Thread-8  :21431 [wandb_run.py:_footer_history_summary_info():3936] rendering history
+2025-06-13 20:39:18,930 INFO    Thread-8  :21431 [wandb_run.py:_footer_history_summary_info():3968] rendering summary
+2025-06-13 20:39:18,935 INFO    Thread-8  :21431 [wandb_run.py:_footer_sync_info():3895] logging synced files

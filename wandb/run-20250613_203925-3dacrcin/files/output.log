@@ -1,0 +1,6 @@
+learning_rate: 8.561356054933206e-05
+n_steps: 2592
+gamma: 0.9119931037876984
+batch_size: 81
+n_epochs: 5
+gae_lambda: 0.9213472376885196

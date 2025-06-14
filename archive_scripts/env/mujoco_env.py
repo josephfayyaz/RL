@@ -4,13 +4,10 @@ from collections import OrderedDict
 import os
 from os import path
 
-
-
 from gym import error, spaces
 from gym.utils import seeding
 import numpy as np
 import gym
-
 
 try:
     import mujoco_py
