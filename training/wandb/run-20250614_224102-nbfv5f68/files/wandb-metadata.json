@@ -1,0 +1,88 @@
+{
+    "os": "Linux-6.11.0-25-generic-x86_64-with-glibc2.17",
+    "python": "3.8.20",
+    "heartbeatAt": "2025-06-14T20:41:03.546169",
+    "startedAt": "2025-06-14T20:41:02.611750",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "PPO_1M_source_source_Train.py",
+    "codePathLocal": "PPO_1M_source_source_Train.py",
+    "codePath": "training/PPO_1M_source_source_Train.py",
+    "git": {
+        "remote": "https://github.com/josephfayyaz/RL.git",
+        "commit": "bff2ba3c6932922fa08bafd05f4a144236c90d79"
+    },
+    "email": "yousef.f3@gmail.com",
+    "root": "/home/joseph/python-proj/1",
+    "host": "joseph-ubuntu",
+    "username": "joseph",
+    "executable": "/home/joseph/anaconda3/envs/RL/bin/python",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 3413.5363749999997,
+        "min": 800.0,
+        "max": 3800.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3413.337,
+            "min": 800.0,
+            "max": 3800.0
+        },
+        {
+            "current": 3404.103,
+            "min": 800.0,
+            "max": 3800.0
+        },
+        {
+            "current": 3399.987,
+            "min": 800.0,
+            "max": 3800.0
+        },
+        {
+            "current": 3400.467,
+            "min": 800.0,
+            "max": 3800.0
+        },
+        {
+            "current": 3408.071,
+            "min": 800.0,
+            "max": 3800.0
+        },
+        {
+            "current": 3399.979,
+            "min": 800.0,
+            "max": 3800.0
+        },
+        {
+            "current": 3399.815,
+            "min": 800.0,
+            "max": 3800.0
+        },
+        {
+            "current": 3402.202,
+            "min": 800.0,
+            "max": 3800.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 113.94120025634766,
+            "used": 53.90941619873047
+        }
+    },
+    "gpu": "NVIDIA GeForce GTX 1060",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce GTX 1060",
+            "memory_total": 6442450944
+        }
+    ],
+    "memory": {
+        "total": 15.500507354736328
+    }
+}

@@ -2,6 +2,9 @@
 Finding the best set of hyperparameters in the source_env->source_env configuration, using a wandb random sweep for 30 runs.
 The model with the best hyperparameters is trained for 350k timesteps (three seeds) and saved as "best_model_ppo_ss_350".
 """
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import gym
 from stable_baselines3 import PPO

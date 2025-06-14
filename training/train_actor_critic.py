@@ -1,9 +1,19 @@
 import csv
 import torch
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from timeit import default_timer as timer
-from env.custom_hopper import *
 from agents.agent_ac import Agent_ac, Policy_ac
 import wandb
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import gym
+
+from env.custom_hopper import *
+
 
 device = "cuda"
 
@@ -30,14 +40,14 @@ def main():
     config = {
         "policy_type": "MlpPolicy",
         "total_timesteps": 100000,
-        "env_id_source": "CustomHopper-sadr-v0",
-        "env_id_target" : "CustomHopper-target-v0",
+        "env_id_source": "CustomHopper-sudr-v0",
+        "env_id_target" : "c",
         "test_episodes": 50,
         "success_threshold": 1000
     }
 
     run = wandb.init(
-        project="reinforce_actor_critic_100K_UDR_2",
+        project="reinforce_actor_critic_100K_UDR_3",
         config=config,
         sync_tensorboard=True
     )
@@ -62,7 +72,7 @@ def main():
     start = timer()
 
     # CSV Logging
-    training_csv = open("../Logs/actor_critic/training_actor_critic_100K_UDR_log.csv", "w", newline="")
+    training_csv = open("../Logs/actor_critic/training_actor_critic_100K_UDR_log_2.csv", "w", newline="")
     train_writer = csv.writer(training_csv)
     train_writer.writerow(["timestep", "mean_reward", "std_reward", "steps_to_1000_return"])
 
@@ -151,7 +161,7 @@ def main():
         test_writer.writerow(["source", mean_r, std_r, p5_r, success_rate])
         test_writer.writerow(["target", mean_r_t, std_r_t, p5_r_t, success_rate_t])
 
-    torch.save(agent.policy.state_dict(), "../Models/actor_critic/model_actor_critic_UDR_1_100K.mdl")
+    torch.save(agent.policy.state_dict(), "../Models/actor_critic/model_actor_critic_UDR_2_100K.mdl")
     print(f"Total training time: {end - start:.2f} seconds")
 
     run.finish()

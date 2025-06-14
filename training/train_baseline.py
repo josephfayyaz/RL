@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import csv
 import torch
 from timeit import default_timer as timer
@@ -29,14 +32,14 @@ def main():
     config = {
         "policy_type": "MlpPolicy",
         "total_timesteps": 100000,
-        "env_id_source": "CustomHopper-udr-v0",
+        "env_id_source": "CustomHopper-source-v0",
         "env_id_target" : "CustomHopper-target-v0",
         "test_episodes": 50,
         "success_threshold": 1000
     }
 
     run = wandb.init(
-        project="reinforce_baseline_100K_UDR_saghal_1",
+        project="reinforce_baseline_100K_1",
         config=config,
         sync_tensorboard=True
     )
@@ -142,13 +145,13 @@ def main():
     print(f"AUC across levels: {auc:.2f}")
 
     # Save test results
-    with open("Logs/baseline/test_log_baseline.csv", "w", newline="") as test_log:
+    with open("../Logs/baseline/test_log_baseline.csv", "w", newline="") as test_log:
         test_writer = csv.writer(test_log)
         test_writer.writerow(["env_type", "mean_reward", "std_reward", "5th_percentile", "success_rate"])
         test_writer.writerow(["source", mean_r, std_r, p5_r, success_rate])
         test_writer.writerow(["target", mean_rt, std_rt, p5_rt, success_rate_t])
 
-    torch.save(agent.policy.state_dict(), "Models/model_reinforce_baseline/model_reinforce_baseline_2_100K.mdl")
+    torch.save(agent.policy.state_dict(), "../Models/reinforce_baseline/model_reinforce_baseline_1_100K.mdl")
     print(f"Total training time: {end - start:.2f} seconds")
 
     run.finish()

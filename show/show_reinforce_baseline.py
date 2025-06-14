@@ -1,4 +1,6 @@
 """Test an RL agent on the OpenAI Gym Hopper environment"""
+
+
 import torch
 from env.custom_hopper import *
 from agents.agent_baseline import Agent_states as Agent, Policy_states as Policy , BaselineNetwork
@@ -24,7 +26,7 @@ episodes= 100
 
 
 def main():
-    env = gym.make('CustomHopper-sudr-v0')
+    env = gym.make('CustomHopper-source-v0')
     # env = gym.make('CustomHopper-target-v0')
 
     print('Action space:', env.action_space)
