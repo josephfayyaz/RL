@@ -1,10 +1,56 @@
-/custom-files/env/__init__.py
-/env/__init__.py
-/colab_starting_code.ipynb
-/model.mdl
-/custom-files/model-normal/model-1.mdl
-/custom-files/model-normal/model-2.mdl
-/MUJOCO_LOG.TXT
-/README.md
-/custom-files/logs/PPO_1/events.out.tfevents.1747412997.joseph-ubuntu.36168.0
-/.idea/git_toolbox_blame.xml
+# === IDE and Editor Configuration ===
+.idea/
+*.iml
+.vscode/
+
+# === Python Bytecode ===
+__pycache__/
+*.py[cod]
+*.pyo
+
+# === Virtual Environments ===
+env/
+venv/
+ENV/
+.custom-files/env/
+
+# === Model Files (binary, non-source) ===
+*.mdl
+/Models/
+/custom-files/model_actor_critic/
+/custom-files/models-parastoo/
+/custom-files/modelsPPO/
+
+# === Log Files and Outputs ===
+*.log
+*.csv
+MUJOCO_LOG.TXT
+logs/
+custom-files/Logs/
+/wandb/
+latest-run
+run-*.wandb
+
+# === TensorBoard ===
+**/events.out.tfevents.*
+
+# === Images and Outputs ===
+*.png
+*.jpg
+*.jpeg
+
+# === Misc Files ===
+.DS_Store
+Thumbs.db
+
+# === Environment and Build ===
+*.egg-info/
+*.egg
+dist/
+build/
+*.spec
+
+# === Security & Config (if applicable) ===
+.env
+*.key
+*.pem
