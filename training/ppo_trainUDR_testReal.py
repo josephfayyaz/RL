@@ -11,7 +11,6 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import SubprocVecEnv, DummyVecEnv
 from stable_baselines3.common.callbacks import CheckpointCallback, BaseCallback, EvalCallback, CallbackList
-
 from RL.env.custom_hopper import CustomHopper
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
