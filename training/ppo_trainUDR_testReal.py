@@ -194,7 +194,7 @@ def main():
                              verbose=2) if i == 2 else None
 
         checkpoint_callback = CheckpointCallback(
-            save_freq=1000, save_path=f'{SAVE_PATH}/{run.id}/seed_{seed}', name_prefix='rl_model'
+            save_freq=1000, save_path=f'{SAVE_PATH}/{run.id}/seed_{seed}', name_prefix='PPO_UDR'
         )
 
         eval_callback = EvalCallback(

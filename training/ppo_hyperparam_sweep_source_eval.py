@@ -17,13 +17,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import env.custom_hopper  # Ensure this file exists and is correct
 
 # ---------- Configuration ---------- #
-ENV_TRAIN = 'CustomHopper-udr-v0'
-ENV_TEST = 'CustomHopper-target-v0'
+ENV_TRAIN = 'CustomHopper-source-v0'
+ENV_TEST = 'CustomHopper-source-v0'
 SEEDS = [0,14,42]
 TOTAL_TIMESTEPS = 350_000
-SAVE_BEST_PATH = "./modelsPPO/best_model_ppo_ss_350"
 SAVE_HP_PATH = "./modelsPPO/best_hyperparameters.json"
-LOG_CSV = "Logs/ppo_sweep_log.csv"
+LOG_CSV = "Logs/PPO/ppo_hyperparam_sweep_source_eval.csv"
 WANDB_PROJECT = "ppo_sweep_ss"
 
 # ---------- Sweep Configuration ---------- #
@@ -95,9 +94,7 @@ def train_and_evaluate(train_env, test_env):
             model = PPO("MlpPolicy", train_env, learning_rate=lr, n_steps=nsteps, gamma=gamma,
                         batch_size=bs, n_epochs=nepochs, gae_lambda=gl, seed=seed, verbose=0)
 
-            checkpoint_cb = CheckpointCallback(save_freq=100_000, save_path=f"modelsPPO/seed{seed}",
-                                           name_prefix=f"checkpoint_seed{seed}")
-            model.learn(total_timesteps=TOTAL_TIMESTEPS, callback=[checkpoint_cb])
+            model.learn(total_timesteps=TOTAL_TIMESTEPS)
 
             mean_r, std_r = evaluate_policy(model, test_env, n_eval_episodes=50, deterministic=True)
 
@@ -121,8 +118,8 @@ def train_and_evaluate(train_env, test_env):
         wandb.log({"mean_mean_reward": mean_mean_reward})
 
         # Save model and config
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        model.save(f"{SAVE_BEST_PATH}_{timestamp}")
+        # timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        # model.save(f"./modelsPPO/best_model_ppo_ss_350_{timestamp}")
         print(f"Model saved with reward {mean_r:.2f}")
 
         best_hyperparameters = {
