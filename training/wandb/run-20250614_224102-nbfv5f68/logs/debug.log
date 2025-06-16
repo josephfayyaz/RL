@@ -1,0 +1,29 @@
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_setup.py:_flush():76] Current SDK version is 0.16.6
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_setup.py:_flush():76] Configure stats pid to 19982
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_setup.py:_flush():76] Loading settings from /home/joseph/.config/wandb/settings
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_setup.py:_flush():76] Loading settings from /home/joseph/python-proj/1/training/wandb/settings
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'training/PPO_1M_source_source_Train.py', 'program_abspath': '/home/joseph/python-proj/1/training/PPO_1M_source_source_Train.py', 'program': 'PPO_1M_source_source_Train.py'}
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_setup.py:_flush():76] Applying login settings: {}
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_init.py:_log_setup():521] Logging user logs to /home/joseph/python-proj/1/training/wandb/run-20250614_224102-nbfv5f68/logs/debug.log
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_init.py:_log_setup():522] Logging internal logs to /home/joseph/python-proj/1/training/wandb/run-20250614_224102-nbfv5f68/logs/debug-internal.log
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_init.py:init():561] calling init triggers
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_init.py:init():568] wandb.init called with sweep_config: {}
+config: {'policy_type': 'MlpPolicy', 'total_timesteps': 400000, 'env_id': 'CustomHopper-source-v0'}
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_init.py:init():611] starting backend
+2025-06-14 22:41:02,613 INFO    MainThread:19982 [wandb_init.py:init():615] setting up manager
+2025-06-14 22:41:02,615 INFO    MainThread:19982 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2025-06-14 22:41:02,617 INFO    MainThread:19982 [wandb_init.py:init():623] backend started and connected
+2025-06-14 22:41:02,621 INFO    MainThread:19982 [wandb_init.py:init():715] updated telemetry
+2025-06-14 22:41:02,644 INFO    MainThread:19982 [wandb_init.py:init():748] communicating run to backend with 90.0 second timeout
+2025-06-14 22:41:03,339 INFO    MainThread:19982 [wandb_run.py:_on_init():2357] communicating current version
+2025-06-14 22:41:03,512 INFO    MainThread:19982 [wandb_run.py:_on_init():2366] got version response upgrade_message: "wandb version 0.20.1 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2025-06-14 22:41:03,512 INFO    MainThread:19982 [wandb_init.py:init():799] starting run threads in backend
+2025-06-14 22:41:05,185 INFO    MainThread:19982 [wandb_run.py:_console_start():2335] atexit reg
+2025-06-14 22:41:05,186 INFO    MainThread:19982 [wandb_run.py:_redirect():2190] redirect: wrap_raw
+2025-06-14 22:41:05,186 INFO    MainThread:19982 [wandb_run.py:_redirect():2255] Wrapping output streams.
+2025-06-14 22:41:05,186 INFO    MainThread:19982 [wandb_run.py:_redirect():2280] Redirects installed.
+2025-06-14 22:41:05,187 INFO    MainThread:19982 [wandb_init.py:init():842] run started, returning control to user process
+2025-06-14 22:41:15,490 WARNING MsgRouterThr:19982 [router.py:message_loop():77] message_loop has been closed

@@ -6,7 +6,7 @@
 """
 
 import gym
-from env.custom_hopper import *
+# from env.custom_hopper import *
 import os
 import argparse
 from stable_baselines3 import PPO

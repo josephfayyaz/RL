@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "PPO_1M_source_source_Train.py", line 82, in <module>
+    main()
+  File "PPO_1M_source_source_Train.py", line 44, in main
+    model_1 = PPO("MlpPolicy", source_env, **best_hp, seed=0, verbose=2)
+TypeError: __init__() got an unexpected keyword argument 'lr'
+🚀 Training PPO model with seed=0...

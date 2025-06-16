@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import csv
 import torch
 from timeit import default_timer as timer
@@ -43,8 +47,8 @@ def main():
     wandb.run.name = "Reinforce_Baseline_Run"
     wandb.run.save()
 
-    env = gym.make(config["env_id"])
-    env_target = gym.make(config["env_id"])
+    env = gym.make(config["env_id_source"])
+    env_target = gym.make(config["env_id_target"])
 
     observation_space_dim = env.observation_space.shape[-1]
     action_space_dim = env.action_space.shape[-1]
@@ -71,6 +75,8 @@ def main():
         state, reward, done, _ = env.step(action.detach().cpu().numpy())
 
         agent.store_outcome(previous_state, state, action_probabilities, reward, done)
+        print('Training episode:', total_timesteps)
+
         train_reward += reward
         total_timesteps += 1
 

@@ -18,7 +18,7 @@ from agents.agent_ac import Agent_ac as Agent, Policy_ac as Policy
 #
 # args = parse_args()
 
-model= "/home/joseph/python-proj/1/custom-files/Models/model_actor_critic/model_actor_critic_UDR_1_100K.mdl"
+model= "/home/joseph/python-proj/1/Models/actor_critic/model_actor_critic_UDR_2_100K.mdl"
 device= "cuda"
 render= "True"
 episodes= 100
@@ -26,8 +26,7 @@ episodes= 100
 
 
 def main():
-    # env = gym.make('CustomHopper-udr-v0')
-    env = gym.make('CustomHopper-target-v0')
+    env = gym.make('CustomHopper-source-v0')
 
     print('Action space:', env.action_space)
     print('State space:', env.observation_space)
