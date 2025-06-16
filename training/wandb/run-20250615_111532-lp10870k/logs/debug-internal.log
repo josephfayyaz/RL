@@ -1,0 +1,16 @@
+{"time":"2025-06-15T11:15:33.238105161+02:00","level":"INFO","msg":"stream: starting","core version":"0.20.1","symlink path":"/home/parastoo/Desktop/new1/RL/training/wandb/run-20250615_111532-lp10870k/logs/debug-core.log"}
+{"time":"2025-06-15T11:15:33.533028468+02:00","level":"INFO","msg":"stream: created new stream","id":"lp10870k"}
+{"time":"2025-06-15T11:15:33.533054136+02:00","level":"INFO","msg":"stream: started","id":"lp10870k"}
+{"time":"2025-06-15T11:15:33.533063904+02:00","level":"INFO","msg":"writer: Do: started","stream_id":"lp10870k"}
+{"time":"2025-06-15T11:15:33.533069815+02:00","level":"INFO","msg":"sender: started","stream_id":"lp10870k"}
+{"time":"2025-06-15T11:15:33.533141018+02:00","level":"INFO","msg":"handler: started","stream_id":"lp10870k"}
+{"time":"2025-06-15T11:15:34.091055861+02:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-06-15T11:40:30.956824651+02:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-06-15T11:40:30.956889112+02:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-06-15T11:40:31.634504247+02:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-06-15T11:40:31.85298757+02:00","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2025-06-15T11:40:31.854669589+02:00","level":"INFO","msg":"stream: closing","id":"lp10870k"}
+{"time":"2025-06-15T11:40:31.854681942+02:00","level":"INFO","msg":"handler: closed","stream_id":"lp10870k"}
+{"time":"2025-06-15T11:40:31.854690789+02:00","level":"INFO","msg":"writer: Close: closed","stream_id":"lp10870k"}
+{"time":"2025-06-15T11:40:31.854698613+02:00","level":"INFO","msg":"sender: closed","stream_id":"lp10870k"}
+{"time":"2025-06-15T11:40:31.854729321+02:00","level":"INFO","msg":"stream: closed","id":"lp10870k"}

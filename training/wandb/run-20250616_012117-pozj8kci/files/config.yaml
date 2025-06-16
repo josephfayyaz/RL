@@ -1,0 +1,44 @@
+_wandb:
+    value:
+        cli_version: 0.20.1
+        m: []
+        python_version: 3.8.20
+        t:
+            "1":
+                - 1
+            "2":
+                - 1
+            "3":
+                - 2
+                - 16
+                - 22
+                - 35
+                - 55
+            "4": 3.8.20
+            "5": 0.20.1
+            "12": 0.20.1
+            "13": linux-x86_64
+batch_size:
+    value: 75
+best_mean_reward:
+    value: 527.1323770533332
+best_std_reward:
+    value: 23.189308784236726
+env_id_test:
+    value: CustomHopper-target-v0
+env_id_train:
+    value: CustomHopper-sudr-v0
+gae_lambda:
+    value: 0.9970783069680812
+gamma:
+    value: 0.9337442569785808
+learning_rate:
+    value: 8.234655384179927e-05
+n_epochs:
+    value: 16
+n_steps:
+    value: 2400
+policy_type:
+    value: MlpPolicy
+total_timesteps:
+    value: 1000000

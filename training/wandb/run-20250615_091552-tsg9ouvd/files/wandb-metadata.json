@@ -1,0 +1,43 @@
+{
+  "os": "Linux-6.11.0-26-generic-x86_64-with-glibc2.17",
+  "python": "CPython 3.8.20",
+  "startedAt": "2025-06-15T07:15:52.715252Z",
+  "program": "PPO_Train.py",
+  "codePath": "training/PPO_Train.py",
+  "git": {
+    "remote": "https://github.com/josephfayyaz/RL.git",
+    "commit": "bff2ba3c6932922fa08bafd05f4a144236c90d79"
+  },
+  "email": "parastoohashemi78@gmail.com",
+  "root": "/home/parastoo/Desktop/new1/RL/training",
+  "host": "parastoo-pc",
+  "executable": "/home/parastoo/anaconda3/envs/rl/bin/python",
+  "codePathLocal": "PPO_Train.py",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "141386334208",
+      "used": "61648855040"
+    }
+  },
+  "memory": {
+    "total": "16151990272"
+  },
+  "cpu": {
+    "count": 8,
+    "countLogical": 16
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 3060 Laptop GPU",
+      "memoryTotal": "6442450944",
+      "cudaCores": 3840,
+      "architecture": "Ampere",
+      "uuid": "GPU-8cdcee88-5d22-240a-7294-3c82b68a0b4e"
+    }
+  ],
+  "cudaVersion": "12.2"
+}

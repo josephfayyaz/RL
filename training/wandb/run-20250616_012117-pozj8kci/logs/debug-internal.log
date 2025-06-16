@@ -1,0 +1,19 @@
+{"time":"2025-06-16T01:21:17.288478542+02:00","level":"INFO","msg":"stream: starting","core version":"0.20.1","symlink path":"/home/parastoo/Desktop/new1/RL/training/wandb/run-20250616_012117-pozj8kci/logs/debug-core.log"}
+{"time":"2025-06-16T01:21:17.571020842+02:00","level":"INFO","msg":"stream: created new stream","id":"pozj8kci"}
+{"time":"2025-06-16T01:21:17.571054524+02:00","level":"INFO","msg":"stream: started","id":"pozj8kci"}
+{"time":"2025-06-16T01:21:17.571067138+02:00","level":"INFO","msg":"writer: Do: started","stream_id":"pozj8kci"}
+{"time":"2025-06-16T01:21:17.571080402+02:00","level":"INFO","msg":"sender: started","stream_id":"pozj8kci"}
+{"time":"2025-06-16T01:21:17.571119595+02:00","level":"INFO","msg":"handler: started","stream_id":"pozj8kci"}
+{"time":"2025-06-16T01:21:17.856669432+02:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-06-16T01:44:09.454580068+02:00","level":"WARN","msg":"tensorboard: no root directory","error":"timed out after 10s"}
+{"time":"2025-06-16T01:44:09.45604298+02:00","level":"INFO","msg":"tensorboard: tracking new log directory","rootDir":{},"logDir":"LocalOrCloudPath(LocalPath=\"/home/parastoo/Desktop/new1/RL/training/runs/20250616_012116/pozj8kci/seed_42/PPO_1\")","namespace":""}
+{"time":"2025-06-16T01:44:09.461228235+02:00","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/parastoo/Desktop/new1/RL/training/runs/20250616_012116/pozj8kci/seed_42/PPO_1/events.out.tfevents.1750031039.parastoo-pc.12907.0","runPath":"runs/20250616_012116/pozj8kci/seed_42/PPO_1/events.out.tfevents.1750031039.parastoo-pc.12907.0"}
+{"time":"2025-06-16T01:55:04.619142127+02:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-06-16T01:55:04.619682841+02:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-06-16T01:55:05.550752882+02:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-06-16T01:55:05.620695978+02:00","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading summary, console lines 4305-4305","runtime_seconds":0.069265884}],"total_operations":1}}
+{"time":"2025-06-16T01:55:05.780499117+02:00","level":"INFO","msg":"stream: closing","id":"pozj8kci"}
+{"time":"2025-06-16T01:55:05.780524915+02:00","level":"INFO","msg":"handler: closed","stream_id":"pozj8kci"}
+{"time":"2025-06-16T01:55:05.780538782+02:00","level":"INFO","msg":"writer: Close: closed","stream_id":"pozj8kci"}
+{"time":"2025-06-16T01:55:05.780549542+02:00","level":"INFO","msg":"sender: closed","stream_id":"pozj8kci"}
+{"time":"2025-06-16T01:55:05.7805908+02:00","level":"INFO","msg":"stream: closed","id":"pozj8kci"}

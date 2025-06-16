@@ -1,0 +1,12 @@
+wandb_version: 1
+
+batch_size:
+  value: 82
+gae_lambda:
+  value: 0.9604492565098712
+gamma:
+  value: 0.9738423818173096
+learning_rate:
+  value: 0.00106806209788472
+n_epochs:
+  value: 12

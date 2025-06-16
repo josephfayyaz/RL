@@ -1,0 +1,3 @@
+--- Hyperparameters ---
+lr=0.00106806209788472, gamma=0.9738423818173096, batch_size=82, n_steps=2624, n_epochs=12, gae_lambda=0.9604492565098712
+Best model saved with avg reward 866.55

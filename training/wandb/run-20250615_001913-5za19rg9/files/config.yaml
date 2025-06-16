@@ -1,0 +1,150 @@
+_current_progress_remaining:
+    value: 1
+_custom_logger:
+    value: "False"
+_episode_num:
+    value: 0
+_last_episode_starts:
+    value: '[ True]'
+_last_obs:
+    value: |-
+        [[ 1.24984339e+00  4.20770821e-03 -1.80545207e-04  5.60941601e-04
+           1.84226466e-03 -3.59075061e-03 -1.20677992e-03 -3.05666257e-03
+           2.06348734e-03  1.65001672e-03  4.86976948e-03]]
+_last_original_obs:
+    value: None
+_logger:
+    value: <stable_baselines3.common.logger.Logger object at 0x72ceed115190>
+_n_updates:
+    value: 0
+_num_timesteps_at_start:
+    value: 0
+_total_timesteps:
+    value: 1000000
+_vec_normalize_env:
+    value: None
+_wandb:
+    value:
+        cli_version: 0.20.1
+        m: []
+        python_version: 3.8.20
+        t:
+            "1":
+                - 1
+            "2":
+                - 1
+            "3":
+                - 2
+                - 3
+                - 16
+                - 22
+                - 35
+                - 55
+            "4": 3.8.20
+            "5": 0.20.1
+            "12": 0.20.1
+            "13": linux-x86_64
+action_noise:
+    value: None
+action_space:
+    value: Box([-1. -1. -1.], [1. 1. 1.], (3,), float32)
+algo:
+    value: PPO
+batch_size:
+    value: 122
+clip_range:
+    value: <function constant_fn.<locals>.func at 0x72cef4dd6700>
+clip_range_vf:
+    value: None
+device:
+    value: cuda
+ent_coef:
+    value: 0
+env:
+    value: <stable_baselines3.common.vec_env.dummy_vec_env.DummyVecEnv object at 0x72cef4d98e50>
+env_id_test:
+    value: CustomHopper-target-v0
+env_id_train:
+    value: CustomHopper-sudr-v0
+ep_info_buffer:
+    value: deque([], maxlen=100)
+ep_success_buffer:
+    value: deque([], maxlen=100)
+gae_lambda:
+    value: 0.8664510358272188
+gamma:
+    value: 0.9015785174956624
+learning_rate:
+    value: 0.0007497752262606178
+lr_schedule:
+    value: <function constant_fn.<locals>.func at 0x72ceed1cca60>
+max_grad_norm:
+    value: 0.5
+n_envs:
+    value: 1
+n_epochs:
+    value: 7
+n_steps:
+    value: 3904
+normalize_advantage:
+    value: "True"
+num_timesteps:
+    value: 0
+observation_space:
+    value: Box([-inf -inf -inf -inf -inf -inf -inf -inf -inf -inf -inf], [inf inf inf inf inf inf inf inf inf inf inf], (11,), float64)
+policy:
+    value: |-
+        ActorCriticPolicy(
+          (features_extractor): FlattenExtractor(
+            (flatten): Flatten(start_dim=1, end_dim=-1)
+          )
+          (pi_features_extractor): FlattenExtractor(
+            (flatten): Flatten(start_dim=1, end_dim=-1)
+          )
+          (vf_features_extractor): FlattenExtractor(
+            (flatten): Flatten(start_dim=1, end_dim=-1)
+          )
+          (mlp_extractor): MlpExtractor(
+            (shared_net): Sequential()
+            (policy_net): Sequential(
+              (0): Linear(in_features=11, out_features=64, bias=True)
+              (1): Tanh()
+              (2): Linear(in_features=64, out_features=64, bias=True)
+              (3): Tanh()
+            )
+            (value_net): Sequential(
+              (0): Linear(in_features=11, out_features=64, bias=True)
+              (1): Tanh()
+              (2): Linear(in_features=64, out_features=64, bias=True)
+              (3): Tanh()
+            )
+          )
+          (action_net): Linear(in_features=64, out_features=3, bias=True)
+          (value_net): Linear(in_features=64, out_features=1, bias=True)
+        )
+policy_class:
+    value: <class 'stable_baselines3.common.policies.ActorCriticPolicy'>
+policy_kwargs:
+    value: '{}'
+policy_type:
+    value: MlpPolicy
+rollout_buffer:
+    value: <stable_baselines3.common.buffers.RolloutBuffer object at 0x72cedb7d6f70>
+sde_sample_freq:
+    value: -1
+seed:
+    value: 42
+start_time:
+    value: 1749942647759509333
+target_kl:
+    value: None
+tensorboard_log:
+    value: runs/5za19rg9/seed_42
+total_timesteps:
+    value: 1000000
+use_sde:
+    value: "False"
+verbose:
+    value: 2
+vf_coef:
+    value: 0.5

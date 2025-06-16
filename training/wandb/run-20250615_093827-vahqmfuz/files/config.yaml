@@ -1,0 +1,52 @@
+_wandb:
+    value:
+        cli_version: 0.20.1
+        m: []
+        python_version: 3.8.20
+        t:
+            "1":
+                - 1
+            "2":
+                - 1
+            "3":
+                - 2
+                - 14
+                - 16
+                - 55
+            "4": 3.8.20
+            "5": 0.20.1
+            "12": 0.20.1
+            "13": linux-x86_64
+batch_size:
+    value: 121
+gae_lambda:
+    value: 0.8536936666983914
+gamma:
+    value: 0.90851023719791
+learning_rate:
+    value: 0.0012977088064253484
+method:
+    value: random
+metric:
+    value:
+        goal: maximize
+        name: mean_mean_reward
+n_epochs:
+    value: 8
+parameters:
+    value:
+        batch_size:
+            max: 128
+            min: 32
+        gae_lambda:
+            max: 0.999
+            min: 0.85
+        gamma:
+            max: 0.9999
+            min: 0.9
+        learning_rate:
+            max: 0.003
+            min: 3e-05
+        n_epochs:
+            max: 20
+            min: 5
