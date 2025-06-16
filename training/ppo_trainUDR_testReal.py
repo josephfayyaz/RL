@@ -1,4 +1,4 @@
-import os
+import os , sys
 import csv
 import gym
 import json
@@ -11,7 +11,9 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import SubprocVecEnv, DummyVecEnv
 from stable_baselines3.common.callbacks import CheckpointCallback, BaseCallback, EvalCallback, CallbackList
-import sys
+
+from RL.env.custom_hopper import CustomHopper
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from env.custom_hopper import *
 import argparse
@@ -36,15 +38,15 @@ from datetime import datetime
 # ---------- Config ---------- #
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 HP_PATH = "./modelsPPO/best_hyperparameters.json"
-ENV_TRAIN = 'CustomHopper-sudr-v0'
+ENV_TRAIN = 'CustomHopper-udr-v0'
 ENV_TEST = 'CustomHopper-target-v0'
-SAVE_DIR = f"./modelsPPO/{timestamp}"
+SAVE_PATH = f"./modelsPPO/{timestamp}"
 SEEDS = [0,14,42]
 TOTAL_TIMESTEPS = 1_000_000
 EpisodeBasedReward_CSV = f"Logs/src_tgt_PPO_UDR_EpisodeBasedReward_CSV_{timestamp}.csv"
 Learning_curve_CSV = f"Logs/src_tgt_PPO_UDR_learning_curve_{timestamp}_{TOTAL_TIMESTEPS}.csv"
 CSV_OUT = f"Logs/csv/src_tgt_PPO_UDR_{timestamp}_{TOTAL_TIMESTEPS}.csv"
-
+Domain = ["source","cdr","udr"]
 
 # ---------- Episode-based reward ---------- #
 class EpisodeBasedRewardCallback(BaseCallback):
@@ -123,6 +125,10 @@ def set_seed(seed):
 
 def make_env(env_id, seed, rank):
     def _init():
+        env = CustomHopper(
+            domain=Domain,
+            total_timesteps=Total_timesteps
+        )
         env = gym.make(env_id)
         env.seed(seed + rank)
         env.action_space.seed(seed + rank)
@@ -133,7 +139,7 @@ def make_env(env_id, seed, rank):
 def main():
     assert os.path.exists(HP_PATH), "Best hyperparameters file not found. Run ppo_hyperparam_sweep_source_eval first."
     os.makedirs("Logs/csv", exist_ok=True)
-    os.makedirs(SAVE_DIR, exist_ok=True)
+    os.makedirs(SAVE_PATH, exist_ok=True)
 
     best_hp = load_best_hyperparameters(HP_PATH)
 
@@ -179,20 +185,20 @@ def main():
         learning_curve_logger = LearningCurveCallback(
             eval_env=test_env,  # evaluate on source env
             csv_path=Learning_curve_CSV,  # separate CSV for this
-            eval_interval=25000,
+            eval_interval=10000,
             n_eval_episodes=5,
             verbose=1
         )
 
-        callback = WandbCallback(model_save_path=f'{SAVE_DIR}/{run.id}/seed_{seed}',
+        callback = WandbCallback(model_save_path=f'{SAVE_PATH}/{run.id}/seed_{seed}',
                              verbose=2) if i == 2 else None
 
         checkpoint_callback = CheckpointCallback(
-            save_freq=1000, save_path=f'{SAVE_DIR}/{run.id}/seed_{seed}', name_prefix='rl_model'
+            save_freq=1000, save_path=f'{SAVE_PATH}/{run.id}/seed_{seed}', name_prefix='rl_model'
         )
 
         eval_callback = EvalCallback(
-            test_env, best_model_save_path=f'{SAVE_DIR}/{run.id}/seed_{seed}',
+            test_env, best_model_save_path=f'{SAVE_PATH}/{run.id}/seed_{seed}',
             log_path=log_path, eval_freq=5000,
             deterministic=True, render=False
         )
@@ -232,8 +238,8 @@ def main():
     # Save best model (trained on source, best tested on target)
     best_model_idx = max(range(len(results)), key=lambda i: results[i][0])
     best_model = models[best_model_idx]
-    best_model.save(f"{SAVE_DIR}/best_model_ppo_source_target_{TOTAL_TIMESTEPS}")
-    print(f"\n✅ Best model (seed {SEEDS[best_model_idx]}) saved to {SAVE_DIR}/best_model_ppo_source_target")
+    best_model.save(f"{SAVE_PATH}/best_model_ppo_source_target_{TOTAL_TIMESTEPS}")
+    print(f"\n✅ Best model (seed {SEEDS[best_model_idx]}) saved to {SAVE_PATH}/best_model_ppo_source_target")
 
 if __name__ == "__main__":
     main()

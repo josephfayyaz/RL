@@ -1,9 +1,7 @@
-{  "best_mean_reward": 527.1323770533332,
-    "best_std_reward": 23.189308784236726,
-    "learning_rate": 8.234655384179927e-05,
-    "n_steps": 2400,
-    "gamma": 0.9337442569785808,
-    "batch_size": 75,
-    "n_epochs": 16,
-    "gae_lambda": 0.9970783069680812
+{   "learning_rate": 0.0012541462101916157,
+    "gamma": 0.9885202328222382,
+    "batch_size": 123,
+    "n_epochs": 11,
+    "gae_lambda": 0.9472233613269306,
+    "n_steps": 3936
  }

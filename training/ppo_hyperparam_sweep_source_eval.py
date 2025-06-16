@@ -17,7 +17,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import env.custom_hopper  # Ensure this file exists and is correct
 
 # ---------- Configuration ---------- #
-ENV_TRAIN = 'CustomHopper-sudr-v0'
+ENV_TRAIN = 'CustomHopper-udr-v0'
 ENV_TEST = 'CustomHopper-target-v0'
 SEEDS = [0,14,42]
 TOTAL_TIMESTEPS = 350_000

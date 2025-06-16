@@ -24,7 +24,7 @@ episodes= 100
 
 
 def main():
-    env = gym.make('CustomHopper-sudr-v0')
+    env = gym.make('CustomHopper-udr-v0')
     # env = gym.make('CustomHopper-target-v0')
 
     print('Action space:', env.action_space)

@@ -51,7 +51,7 @@ def test_saved_model(algo, env_id, model_path, num_episodes=1000):
 if __name__ == "__main__":
     # Example usage
     ALGO = 'PPO'
-    ENV_ID = 'CustomHopper-sudr-v0'  # Change to your specific environment
+    ENV_ID = 'CustomHopper-udr-v0'  # Change to your specific environment
     MODEL_PATH = model  # './models/PPO_final_model.zip'  # Change to the path of your saved model
     NUM_EPISODES = 2000  # Number of episodes to test the agent
 

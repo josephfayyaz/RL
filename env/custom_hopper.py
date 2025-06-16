@@ -8,17 +8,20 @@ import gym
 from gym import utils
 from .mujoco_env import MujocoEnv
 from cma import CMAEvolutionStrategy
-
+from stable_baselines3.common.callbacks import BaseCallback
 
 class CustomHopper(MujocoEnv, utils.EzPickle):
-    def __init__(self, domain=None):
+    def __init__(self, domain=None ,total_timesteps: int = None):
+        self.domain = domain
+        self.total_timesteps = total_timesteps or 1
+        self.elapsed = 0
         MujocoEnv.__init__(self, 4)
         utils.EzPickle.__init__(self)
-        self.domain = domain
-        self.original_masses = np.copy(self.sim.model.body_mass[1:])  # [torso, thigh, leg, foot]
 
         # Unified Domain Randomization (UDR)
-        if domain == 'sudr':
+        self.original_masses = np.copy(self.sim.model.body_mass[1:])  # [torso, thigh, leg, foot]
+
+        if domain == 'udr':
             # Mass scaling ranges for each body part (torso, thigh, leg, foot)
             self.udr_mass_ranges = {
                 0: (0.5, 1.5),  # torso
@@ -37,7 +40,7 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
 
     def sample_parameters(self, level: float = 1.0):
         """Sample new masses for the hopper using UDR ranges."""
-        if self.domain == 'sudr':
+        if self.domain == 'udr':
 
             randomized_masses = self.original_masses.copy()
             for i in range(len(randomized_masses)):
@@ -65,6 +68,9 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
 
     def step(self, a):
         """Simulate one environment step."""
+
+        if self.domain == "cdr":
+            self.elapsed += 1
         posbefore = self.sim.data.qpos[0]
         self.do_simulation(a, self.frame_skip)
         posafter, height, ang = self.sim.data.qpos[0:3]
@@ -149,11 +155,11 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
         qvel = self.init_qvel + self.np_random.uniform(low=-.005, high=.005, size=self.model.nv)
         self.set_state(qpos, qvel)
 
-        if self.domain in ['sudr']:  # Apply UDR
-            self.set_random_parameters()
+        if self.domain in ['udr']:  # Apply UDR
+            self.set_parameters(self.sample_parameters())
         if self.domain in ['cdr']:
-            self.set_random_parameters()
-
+            level = min(1.0, self.elapsed / self.total_timesteps)
+            self.set_parameters(self.sample_parameters(level))
         return self._get_obs()
 
     def viewer_setup(self):
@@ -250,10 +256,10 @@ gym.envs.register(
 )
 
 gym.envs.register(
-    id="CustomHopper-sudr-v0",  # UDR
+    id="CustomHopper-udr-v0",  # UDR
     entry_point="%s:CustomHopper" % __name__,
     max_episode_steps=5000,
-    kwargs={"domain": "sudr"}
+    kwargs={"domain": "udr"}
 )
 
 
@@ -269,3 +275,14 @@ gym.envs.register(
     max_episode_steps=5000,
     kwargs={"domain": "cdr"}
 )
+class EntropyScheduler(BaseCallback):
+    def __init__(self, start_coef, end_coef, total_timesteps, verbose=0):
+        super().__init__(verbose)
+        self.start = start_coef
+        self.end   = end_coef
+        self.total = total_timesteps
+
+    def _on_step(self) -> bool:
+        frac = min(1.0, self.num_timesteps / self.total)
+        self.model.ent_coef = self.start + frac * (self.end - self.start)
+        return True
