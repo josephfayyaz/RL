@@ -1,0 +1,29 @@
+2025-06-15 08:08:52,670 INFO    Thread-20 :40186 [wandb_setup.py:_flush():81] Current SDK version is 0.20.1
+2025-06-15 08:08:52,670 INFO    Thread-20 :40186 [wandb_setup.py:_flush():81] Configure stats pid to 40186
+2025-06-15 08:08:52,670 INFO    Thread-20 :40186 [wandb_setup.py:_flush():81] Loading settings from /home/parastoo/.config/wandb/settings
+2025-06-15 08:08:52,670 INFO    Thread-20 :40186 [wandb_setup.py:_flush():81] Loading settings from /home/parastoo/Desktop/new1/RL/training/wandb/settings
+2025-06-15 08:08:52,670 INFO    Thread-20 :40186 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2025-06-15 08:08:52,670 INFO    Thread-20 :40186 [wandb_init.py:setup_run_log_directory():703] Logging user logs to /home/parastoo/Desktop/new1/RL/training/wandb/run-20250615_080852-0qnfcmmd/logs/debug.log
+2025-06-15 08:08:52,670 INFO    Thread-20 :40186 [wandb_init.py:setup_run_log_directory():704] Logging internal logs to /home/parastoo/Desktop/new1/RL/training/wandb/run-20250615_080852-0qnfcmmd/logs/debug-internal.log
+2025-06-15 08:08:52,670 INFO    Thread-20 :40186 [wandb_init.py:init():831] calling init triggers
+2025-06-15 08:08:52,671 INFO    Thread-20 :40186 [wandb_init.py:init():836] wandb.init called with sweep_config: {'batch_size': 123, 'gae_lambda': 0.994675528774094, 'gamma': 0.9765592180370372, 'learning_rate': 0.00238411334037696, 'n_epochs': 19}
+config: {'method': 'random', 'metric': {'name': 'mean_mean_reward', 'goal': 'maximize'}, 'parameters': {'learning_rate': {'min': 3e-05, 'max': 0.003}, 'gamma': {'min': 0.9, 'max': 0.9999}, 'batch_size': {'min': 32, 'max': 128}, 'n_epochs': {'min': 5, 'max': 20}, 'gae_lambda': {'min': 0.85, 'max': 0.999}}, '_wandb': {}}
+2025-06-15 08:08:52,671 INFO    Thread-20 :40186 [wandb_init.py:init():872] starting backend
+2025-06-15 08:08:52,917 INFO    Thread-20 :40186 [wandb_init.py:init():875] sending inform_init request
+2025-06-15 08:08:52,918 INFO    Thread-20 :40186 [wandb_init.py:init():883] backend started and connected
+2025-06-15 08:08:52,919 INFO    Thread-20 :40186 [wandb_run.py:_config_callback():1358] config_cb None None {'batch_size': 123, 'gae_lambda': 0.994675528774094, 'gamma': 0.9765592180370372, 'learning_rate': 0.00238411334037696, 'n_epochs': 19}
+2025-06-15 08:08:52,922 INFO    Thread-20 :40186 [wandb_init.py:init():956] updated telemetry
+2025-06-15 08:08:52,971 INFO    Thread-20 :40186 [wandb_init.py:init():980] communicating run to backend with 90.0 second timeout
+2025-06-15 08:08:53,407 INFO    Thread-20 :40186 [wandb_init.py:init():1032] starting run threads in backend
+2025-06-15 08:08:53,454 INFO    Thread-20 :40186 [wandb_run.py:_console_start():2453] atexit reg
+2025-06-15 08:08:53,454 INFO    Thread-20 :40186 [wandb_run.py:_redirect():2301] redirect: wrap_raw
+2025-06-15 08:08:53,454 INFO    Thread-20 :40186 [wandb_run.py:_redirect():2370] Wrapping output streams.
+2025-06-15 08:08:53,454 INFO    Thread-20 :40186 [wandb_run.py:_redirect():2393] Redirects installed.
+2025-06-15 08:08:53,455 INFO    Thread-20 :40186 [wandb_init.py:init():1078] run started, returning control to user process
+2025-06-15 08:29:23,787 INFO    Thread-20 :40186 [wandb_run.py:_finish():2219] finishing run parastoohashemi78-politecnico-di-torino/ppo_sweep_ss/0qnfcmmd
+2025-06-15 08:29:23,787 INFO    Thread-20 :40186 [wandb_run.py:_atexit_cleanup():2418] got exitcode: 0
+2025-06-15 08:29:23,787 INFO    Thread-20 :40186 [wandb_run.py:_restore():2400] restore
+2025-06-15 08:29:23,787 INFO    Thread-20 :40186 [wandb_run.py:_restore():2406] restore done
+2025-06-15 08:29:24,743 INFO    Thread-20 :40186 [wandb_run.py:_footer_history_summary_info():4000] rendering history
+2025-06-15 08:29:24,744 INFO    Thread-20 :40186 [wandb_run.py:_footer_history_summary_info():4032] rendering summary
+2025-06-15 08:29:24,744 INFO    Thread-20 :40186 [wandb_run.py:_footer_sync_info():3961] logging synced files

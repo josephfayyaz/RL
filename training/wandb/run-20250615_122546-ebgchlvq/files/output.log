@@ -1,0 +1,2 @@
+--- Hyperparameters ---
+lr=0.0026874218358119415, gamma=0.9266197209945032, batch_size=106, n_steps=3392, n_epochs=17, gae_lambda=0.9754899053696524

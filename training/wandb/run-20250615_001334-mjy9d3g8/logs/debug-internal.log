@@ -1,0 +1,16 @@
+{"time":"2025-06-15T00:13:34.829395574+02:00","level":"INFO","msg":"stream: starting","core version":"0.20.1","symlink path":"/home/parastoo/Desktop/new1/RL/training/wandb/run-20250615_001334-mjy9d3g8/logs/debug-core.log"}
+{"time":"2025-06-15T00:13:35.112298428+02:00","level":"INFO","msg":"stream: created new stream","id":"mjy9d3g8"}
+{"time":"2025-06-15T00:13:35.112330126+02:00","level":"INFO","msg":"stream: started","id":"mjy9d3g8"}
+{"time":"2025-06-15T00:13:35.112348811+02:00","level":"INFO","msg":"writer: Do: started","stream_id":"mjy9d3g8"}
+{"time":"2025-06-15T00:13:35.112373787+02:00","level":"INFO","msg":"handler: started","stream_id":"mjy9d3g8"}
+{"time":"2025-06-15T00:13:35.11240237+02:00","level":"INFO","msg":"sender: started","stream_id":"mjy9d3g8"}
+{"time":"2025-06-15T00:13:35.301595118+02:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-06-15T00:43:03.454812576+02:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-06-15T00:43:03.45489459+02:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-06-15T00:43:04.100812124+02:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-06-15T00:43:04.421807438+02:00","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading history steps 0-0, summary, console lines 2-2","runtime_seconds":0.320887652}],"total_operations":1}}
+{"time":"2025-06-15T00:43:04.533222136+02:00","level":"INFO","msg":"stream: closing","id":"mjy9d3g8"}
+{"time":"2025-06-15T00:43:04.533237825+02:00","level":"INFO","msg":"handler: closed","stream_id":"mjy9d3g8"}
+{"time":"2025-06-15T00:43:04.533246391+02:00","level":"INFO","msg":"writer: Close: closed","stream_id":"mjy9d3g8"}
+{"time":"2025-06-15T00:43:04.533251741+02:00","level":"INFO","msg":"sender: closed","stream_id":"mjy9d3g8"}
+{"time":"2025-06-15T00:43:04.53334147+02:00","level":"INFO","msg":"stream: closed","id":"mjy9d3g8"}

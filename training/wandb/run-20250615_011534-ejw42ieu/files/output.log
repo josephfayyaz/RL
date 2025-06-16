@@ -1,0 +1,4 @@
+--- Hyperparameters ---
+lr=0.0005333850921463625, gamma=0.9045889872293914, batch_size=49, n_steps=1568, n_epochs=12, gae_lambda=0.9362560586063364
+[34m[1mwandb[0m: Network error (ConnectionError), entering retry loop.
+Best model saved with avg reward 340.72

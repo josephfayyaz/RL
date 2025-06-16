@@ -1,0 +1,16 @@
+{"time":"2025-06-15T07:28:07.00169432+02:00","level":"INFO","msg":"stream: starting","core version":"0.20.1","symlink path":"/home/parastoo/Desktop/new1/RL/training/wandb/run-20250615_072806-2gdfhium/logs/debug-core.log"}
+{"time":"2025-06-15T07:28:07.463006818+02:00","level":"INFO","msg":"stream: created new stream","id":"2gdfhium"}
+{"time":"2025-06-15T07:28:07.463031955+02:00","level":"INFO","msg":"stream: started","id":"2gdfhium"}
+{"time":"2025-06-15T07:28:07.463042215+02:00","level":"INFO","msg":"writer: Do: started","stream_id":"2gdfhium"}
+{"time":"2025-06-15T07:28:07.463067382+02:00","level":"INFO","msg":"sender: started","stream_id":"2gdfhium"}
+{"time":"2025-06-15T07:28:07.463053636+02:00","level":"INFO","msg":"handler: started","stream_id":"2gdfhium"}
+{"time":"2025-06-15T07:28:07.627346826+02:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-06-15T07:47:38.181070935+02:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-06-15T07:47:38.181247046+02:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-06-15T07:47:39.147338459+02:00","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading output.log","runtime_seconds":0.764946491,"progress":"187B/187B"},{"desc":"uploading config.yaml","runtime_seconds":0.599297719,"progress":"991B/991B"}],"total_operations":2}}
+{"time":"2025-06-15T07:47:39.1901009+02:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-06-15T07:47:39.466291893+02:00","level":"INFO","msg":"stream: closing","id":"2gdfhium"}
+{"time":"2025-06-15T07:47:39.466304146+02:00","level":"INFO","msg":"handler: closed","stream_id":"2gdfhium"}
+{"time":"2025-06-15T07:47:39.466314946+02:00","level":"INFO","msg":"writer: Close: closed","stream_id":"2gdfhium"}
+{"time":"2025-06-15T07:47:39.466320166+02:00","level":"INFO","msg":"sender: closed","stream_id":"2gdfhium"}
+{"time":"2025-06-15T07:47:39.46638093+02:00","level":"INFO","msg":"stream: closed","id":"2gdfhium"}
