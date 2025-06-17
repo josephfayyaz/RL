@@ -1,0 +1,11 @@
+
+[34m[1mwandb[39m[22m: [33mWARNING[39m Calling wandb.run.save without any arguments is deprecated.Changes to attributes are automatically persisted.
+Training completed.
+Return ≥ 1000 was never reached.
+Skipping CustomHopper-sudr-0-v0, not registered.
+Skipping CustomHopper-sudr-1-v0, not registered.
+Skipping CustomHopper-sudr-2-v0, not registered.
+Skipping CustomHopper-sudr-3-v0, not registered.
+Skipping CustomHopper-sudr-4-v0, not registered.
+AUC across levels: 0.00
+Total training time: 287.93 seconds

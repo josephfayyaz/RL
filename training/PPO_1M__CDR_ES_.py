@@ -6,17 +6,13 @@
 """
 import os,sys
 import ctypes
-
-from RL.env.custom_hopper import CustomHopper
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-mujoco_path = "C:/.mujoco/mujoco210/bin"  # manually append library for running on windoes
-os.environ["PATH"] += ";" + mujoco_path
-ctypes.CDLL(os.path.join(mujoco_path, "mujoco210.dll"))
 import random, numpy as np
 import gym
 from datetime import datetime
 import csv
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from env.custom_hopper import *
 import argparse
 import torch
@@ -30,15 +26,14 @@ import multiprocessing
 import shutil
 from stable_baselines3.common.evaluation import evaluate_policy
 
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--n-episodes', default=1000000, type=int, help='Number of training episodes')
     parser.add_argument('--print-every', default=100, type=int, help='Print info every <> episodes')
     parser.add_argument('--device', default='cuda', type=str, help='network device [cpu, cuda]')
     parser.add_argument('--algorithm' , default='PPO' ,type=str, choices=['PPO'], help='Algorithm to use for training')
-    parser.add_argument("--Domain",default="cdr",choices=["source","cdr","udr"],type=str,help="Which mass‐randomization regime to use")
-    parser.add_argument('--Entropy_Scheduling', default=False, type=bool, choices=[True,False], help='toggle to use Entropy Scheduling')
+    parser.add_argument("--Domain",default="udr",choices=["source","cdr","udr"],type=str,help="Which mass‐randomization regime to use")
+    parser.add_argument('--Entropy_Scheduling', default=True, type=bool, choices=[True,False], help='toggle to use Entropy Scheduling')
     parser.add_argument('--seed', default=[0,14,42], type=int,nargs="+", help='Random seed for reproducibility')
     parser.add_argument('--n_envs', default=8, type=int, help='Number of parallel environments for training')
 

@@ -1,0 +1,35 @@
+2025-06-15 00:27:59,597 INFO    MainThread:64564 [wandb_setup.py:_flush():76] Current SDK version is 0.16.6
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_setup.py:_flush():76] Configure stats pid to 64564
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_setup.py:_flush():76] Loading settings from /home/joseph/.config/wandb/settings
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_setup.py:_flush():76] Loading settings from /home/joseph/python-proj/1/training/wandb/settings
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'training/train_baseline.py', 'program_abspath': '/home/joseph/python-proj/1/training/train_baseline.py', 'program': 'train_baseline.py'}
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_setup.py:_flush():76] Applying login settings: {}
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_init.py:_log_setup():521] Logging user logs to /home/joseph/python-proj/1/training/wandb/run-20250615_002759-f7funwnr/logs/debug.log
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_init.py:_log_setup():522] Logging internal logs to /home/joseph/python-proj/1/training/wandb/run-20250615_002759-f7funwnr/logs/debug-internal.log
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_init.py:init():561] calling init triggers
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_init.py:init():568] wandb.init called with sweep_config: {}
+config: {'policy_type': 'MlpPolicy', 'total_timesteps': 100000, 'env_id_source': 'CustomHopper-source-v0', 'env_id_target': 'CustomHopper-target-v0', 'test_episodes': 50, 'success_threshold': 1000}
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_init.py:init():611] starting backend
+2025-06-15 00:27:59,598 INFO    MainThread:64564 [wandb_init.py:init():615] setting up manager
+2025-06-15 00:27:59,599 INFO    MainThread:64564 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2025-06-15 00:27:59,600 INFO    MainThread:64564 [wandb_init.py:init():623] backend started and connected
+2025-06-15 00:27:59,604 INFO    MainThread:64564 [wandb_init.py:init():715] updated telemetry
+2025-06-15 00:27:59,624 INFO    MainThread:64564 [wandb_init.py:init():748] communicating run to backend with 90.0 second timeout
+2025-06-15 00:28:00,222 INFO    MainThread:64564 [wandb_run.py:_on_init():2357] communicating current version
+2025-06-15 00:28:00,271 INFO    MainThread:64564 [wandb_run.py:_on_init():2366] got version response upgrade_message: "wandb version 0.20.1 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2025-06-15 00:28:00,272 INFO    MainThread:64564 [wandb_init.py:init():799] starting run threads in backend
+2025-06-15 00:28:01,984 INFO    MainThread:64564 [wandb_run.py:_console_start():2335] atexit reg
+2025-06-15 00:28:01,984 INFO    MainThread:64564 [wandb_run.py:_redirect():2190] redirect: wrap_raw
+2025-06-15 00:28:01,984 INFO    MainThread:64564 [wandb_run.py:_redirect():2255] Wrapping output streams.
+2025-06-15 00:28:01,984 INFO    MainThread:64564 [wandb_run.py:_redirect():2280] Redirects installed.
+2025-06-15 00:28:01,985 INFO    MainThread:64564 [wandb_init.py:init():842] run started, returning control to user process
+2025-06-15 00:32:54,517 INFO    MainThread:64564 [wandb_run.py:_finish():2064] finishing run yousef-f3-politecnico-di-torino/reinforce_baseline_100K_1/f7funwnr
+2025-06-15 00:32:54,517 INFO    MainThread:64564 [wandb_run.py:_atexit_cleanup():2304] got exitcode: 0
+2025-06-15 00:32:54,517 INFO    MainThread:64564 [wandb_run.py:_restore():2287] restore
+2025-06-15 00:32:54,517 INFO    MainThread:64564 [wandb_run.py:_restore():2293] restore done
+2025-06-15 00:33:02,886 INFO    MainThread:64564 [wandb_run.py:_footer_history_summary_info():3936] rendering history
+2025-06-15 00:33:02,886 INFO    MainThread:64564 [wandb_run.py:_footer_history_summary_info():3968] rendering summary
+2025-06-15 00:33:02,891 INFO    MainThread:64564 [wandb_run.py:_footer_sync_info():3895] logging synced files

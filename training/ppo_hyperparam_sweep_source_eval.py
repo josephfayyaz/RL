@@ -21,7 +21,7 @@ ENV_TRAIN = 'CustomHopper-source-v0'
 ENV_TEST = 'CustomHopper-source-v0'
 SEEDS = [0,14,42]
 TOTAL_TIMESTEPS = 350_000
-SAVE_HP_PATH = "./modelsPPO/best_hyperparameters.json"
+SAVE_HP_PATH = "models/PPO/best_hyperparameters.json"
 LOG_CSV = "Logs/PPO/ppo_hyperparam_sweep_source_eval.csv"
 WANDB_PROJECT = "ppo_sweep_ss"
 

@@ -37,7 +37,7 @@ from datetime import datetime
 
 # ---------- Config ---------- #
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-HP_PATH = "./modelsPPO/best_hyperparameters.json"
+HP_PATH = "models/PPO/best_hyperparameters.json"
 ENV_TRAIN = 'CustomHopper-udr-v0'
 ENV_TEST = 'CustomHopper-target-v0'
 SAVE_PATH = f"./modelsPPO/{timestamp}"

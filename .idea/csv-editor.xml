@@ -10,21 +10,14 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/custom-files/Logs/actor_critic/test_log.csv">
+        <entry key="/training/logs/PPO/PPO_Domain_udr_ES_True_seed_14_100(udr,source).csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/custom-files/Logs/actor_critic/training_actor_critic_100K_UDR_log.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/custom-files/PPO/Logs/ppo_sweep_log.csv">
+        <entry key="/training/logs/learning_curve_PPO_Domain _udr_ES_True_seed_0.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
