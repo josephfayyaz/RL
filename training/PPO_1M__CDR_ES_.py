@@ -10,21 +10,22 @@ import random, numpy as np
 import gym
 from datetime import datetime
 import csv
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from env.custom_hopper import *
 import argparse
 import torch
 from stable_baselines3 import PPO
-from stable_baselines3.common.callbacks import CheckpointCallback, EvalCallback
-from stable_baselines3.common.callbacks import BaseCallback
+from stable_baselines3.common.callbacks import CheckpointCallback, EvalCallback , BaseCallback
 from stable_baselines3.common.monitor import Monitor
 import json
 from stable_baselines3.common.vec_env import SubprocVecEnv, DummyVecEnv
 import multiprocessing
 import shutil
 from stable_baselines3.common.evaluation import evaluate_policy
+
+
+
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -50,12 +51,12 @@ if device == 'cuda':
 print(f'training on {torch.cuda.get_device_name(torch.cuda.current_device()) }' if torch.cuda.is_available() else 'training on cpu')
 
 
-HP_PATH = "./models/PPO/best_hyperparameters.json"
+HP_PATH = "../Models/PPO/best_hyperparameters.json"
 ENV_ID = f'CustomHopper-{args.Domain}-v0'
 EVAL_ENV = 'CustomHopper-target-v0'  # Change to your specific environment
-SAVE_PATH = "./models/PPO"
-LOG_PATH     = './logs/PPO/'
-os.makedirs("logs/csv", exist_ok=True)
+SAVE_PATH = "../Models/PPO"
+LOG_PATH     = '../Logs/PPO/'
+# os.makedirs("logs/csv", exist_ok=True)
 
 timestamp    = datetime.now().strftime("%Y%m%d_%H%M%S")
 # Set to True if you want to use Curriculum Domain Randomization

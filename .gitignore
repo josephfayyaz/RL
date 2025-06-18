@@ -8,3 +8,6 @@
 /archive_scripts/README.md
 /custom-files/logs/PPO_1/events.out.tfevents.1747412997.joseph-ubuntu.36168.0
 /.idea/git_toolbox_blame.xml
+/training/wandb/
+/training/runs/
+/archive_scripts/

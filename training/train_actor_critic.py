@@ -1,9 +1,5 @@
 import csv
 import torch
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from timeit import default_timer as timer
 from agents.agent_ac import Agent_ac, Policy_ac
 import wandb
