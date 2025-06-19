@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="/Logs/actor_critic/test_log_3.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/Logs/actor_critic/training_actor_critic_100K_UDR_log_2.csv">
           <value>
             <Attribute>
@@ -10,14 +17,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/training/logs/PPO/PPO_Domain_udr_ES_True_seed_14_100(udr,source).csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/training/logs/src_tgt_PPO_UDR_EpisodeBasedReward_CSV_20250616_012116.csv">
+        <entry key="/Logs/actor_critic/training_actor_critic_upgraded_3.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

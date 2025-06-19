@@ -1,12 +1,11 @@
 # Agent for Actor-Critic
-# Based on agent.py from https://github.com/gabrieletiboni/mldl_2024_template
 
 import numpy as np
 import torch
 import torch.nn.functional as F
 from torch.distributions import Normal
 
-torch.autograd.set_detect_anomaly(True)  # Used for debugging phase
+torch.autograd.set_detect_anomaly(True)
 
 
 def discount_rewards(r, gamma):
@@ -18,11 +17,6 @@ def discount_rewards(r, gamma):
     return discounted_r
 
 
-# Methods that learn approximation to both policy and value function are called
-# Actor-Critic methods
-# the first two layers create a representation of the state and the two output layers map the
-# representation to desired outputs. A larger network would be able to hold a better representation but
-# would take longer to train
 class Policy_ac(torch.nn.Module):
     def __init__(self, state_space, action_space):
         super().__init__()
@@ -31,64 +25,41 @@ class Policy_ac(torch.nn.Module):
         self.hidden = 64
         self.tanh = torch.nn.Tanh()
 
-        """
-            Actor network
-
-            Actor - A reference to the learned policy
-        """
+        # Actor
         self.fc1_actor = torch.nn.Linear(state_space, self.hidden)
         self.fc2_actor = torch.nn.Linear(self.hidden, self.hidden)
-        # Apply a linear transformation from in_features to out_features
         self.fc3_actor_mean = torch.nn.Linear(self.hidden, action_space)
 
-        # Learned standard deviation for exploration at training time
         self.sigma_activation = F.softplus
         init_sigma = 0.75
         self.sigma = torch.nn.Parameter(torch.zeros(self.action_space) + init_sigma)
 
-        """
-            Critic network
-
-            Critic - Refers to the learned value-function, usually a state-value function
-        """
-        # TASK 3: critic network for actor-critic algorithm
+        # Critic
         self.fc1_critic = torch.nn.Linear(state_space, self.hidden)
         self.fc2_critic = torch.nn.Linear(self.hidden, self.hidden)
-        self.fc3_critic = torch.nn.Linear(self.hidden, 1)  # only one: state-value function
+        self.fc3_critic = torch.nn.Linear(self.hidden, 1)
 
         self.init_weights()
 
     def init_weights(self):
         for m in self.modules():
-            if type(m) is torch.nn.Linear:
-                torch.nn.init.normal_(m.weight)
+            if isinstance(m, torch.nn.Linear):
+                torch.nn.init.normal_(m.weight, mean=0, std=0.1)
                 torch.nn.init.zeros_(m.bias)
 
-    # The policy is parametrized through a neural network
     def forward(self, x):
-        """
-            Actor - Reference to the learned policy [13.1]
-        """
+        # Actor forward
         x_actor = self.tanh(self.fc1_actor(x))
         x_actor = self.tanh(self.fc2_actor(x_actor))
         action_mean = self.fc3_actor_mean(x_actor)
-
         sigma = self.sigma_activation(self.sigma)
-
         normal_dist = Normal(action_mean, sigma)
 
-        """
-            Critic - Refers to the value function (usually a state-value function) [13.1]
-            Not present in the REINFORCE algorithm - Comment out everything below for REINFORCE, and
-            make sure it's returning only normal_dist
-        """
-
-        # TASK 3: forward in the critic network
+        # Critic forward
         x_critic = self.tanh(self.fc1_critic(x))
         x_critic = self.tanh(self.fc2_critic(x_critic))
         state_value = self.fc3_critic(x_critic)
 
-        # output actor (action probabilities) and critic (state value)
         return normal_dist, state_value
 
 
@@ -99,6 +70,7 @@ class Agent_ac(object):
         self.optimizer = torch.optim.Adam(policy.parameters(), lr=1e-3)
 
         self.gamma = 0.99
+        self.entropy_beta = 0.01  # encourage exploration
         self.states = []
         self.next_states = []
         self.action_log_probs = []
@@ -109,75 +81,60 @@ class Agent_ac(object):
         action_log_probs = torch.stack(self.action_log_probs, dim=0).to(self.train_device).squeeze(-1)
         states = torch.stack(self.states, dim=0).to(self.train_device).squeeze(-1)
         next_states = torch.stack(self.next_states, dim=0).to(self.train_device).squeeze(-1)
-        rewards = torch.stack(self.rewards, dim=0).to(self.train_device).squeeze(-1)
-        done = torch.Tensor(self.done).to(self.train_device)
+        rewards = torch.stack(self.rewards, dim=0).to(self.train_device).squeeze(-1).float()
+        done = torch.tensor(self.done, dtype=torch.float32, device=self.train_device)
 
-        #
-        # TASK 3:
-        #   - compute boostrapped discounted return estimates
-        #   - compute advantage terms
-        #   - compute actor loss and critic loss
-        #   - compute gradients and step the optimizer
-        #
+        # Optional reward normalization
+        rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-8)
 
-        discounted_returns = discount_rewards(rewards, self.gamma)
+        # Bootstrapped target: R + gamma * V(s')
+        _, state_values = self.policy(states)
+        state_values = state_values.squeeze(-1).float()
 
-        # compute estimate state values for the observed state
-        _, state_values = self.policy(states)  # computing the critic network
-        state_values = state_values.squeeze(-1)  # removing unnecessary dimensions
+        _, next_state_values = self.policy(next_states)
+        next_state_values = next_state_values.squeeze(-1).float()
 
-        # calculating expected return for next state
-        _, state_values_next = self.policy(next_states)
-        state_values_next = state_values_next.squeeze(-1)
-        # BOOTSTRAPPED RETURNS
-        # note that if done = 1 this is a terminal step, therefore the discounted returns remain the same
-        # note that for AC i only have to add the reward of the single step, instead of the whole return
-        state_values_next = rewards + self.gamma * state_values_next * (1.0 - done)
+        targets = rewards + self.gamma * next_state_values * (1.0 - done)
+        advantages = targets.detach() - state_values
 
-        baseline = state_values  # baseline changes according to the state value in the MDP, less variance that constant
-        advantages = state_values_next - baseline  # r_(t+1) + gamma*state_values_next - state_values
-        actor_loss = (-action_log_probs * advantages).sum()
+        # Actor Loss
+        entropy = -torch.sum(torch.stack([dist.entropy().mean() for dist, _ in [self.policy(s.unsqueeze(0)) for s in states]])) / len(states)
+        actor_loss = (-action_log_probs * advantages.detach()).sum() - self.entropy_beta * entropy
 
-        critic_loss = F.mse_loss(state_values, state_values_next.detach())
-        actor_critic_loss = actor_loss + critic_loss
+        # Critic Loss
+        critic_loss = F.mse_loss(state_values, targets.detach())
 
-        # first we zero grad to avoid gradient accumulation.
-        # by performing backward() we compute the gradients of the
-        # policy parameters with respect to this loss, and optimizer.step() updates the
-        # parameters in the direction that minimizes this loss
+        # Total loss
+        total_loss = actor_loss + critic_loss
+
         self.optimizer.zero_grad()
-        actor_critic_loss.backward()
+        total_loss.backward()
+        torch.nn.utils.clip_grad_norm_(self.policy.parameters(), max_norm=0.5)
         self.optimizer.step()
 
-        self.action_log_probs = []
-        self.rewards = []
+        # Clear buffers
         self.states = []
         self.next_states = []
+        self.action_log_probs = []
+        self.rewards = []
         self.done = []
 
-        return
+        return actor_loss.item(), critic_loss.item(), entropy.item()
 
     def get_action(self, state, evaluation=False):
-        """ state -> action (3-d), action_log_densities """
         x = torch.from_numpy(state).float().to(self.train_device)
-
         normal_dist, state_value = self.policy(x)
 
-        if evaluation:  # Return mean
+        if evaluation:
             return normal_dist.mean, None
-
-        else:  # Sample from the distribution
+        else:
             action = normal_dist.sample()
-
-            # Compute Log probability of the action [ log(p(a[0] AND a[1] AND a[2])) = log(p(a[0])*p(a[1])*p(a[2])) = log(p(a[0])) + log(p(a[1])) + log(p(a[2])) ]
             action_log_prob = normal_dist.log_prob(action).sum()
-
             return action, action_log_prob
 
     def store_outcome(self, state, next_state, action_log_prob, reward, done):
         self.states.append(torch.from_numpy(state).float())
         self.next_states.append(torch.from_numpy(next_state).float())
         self.action_log_probs.append(action_log_prob)
-        self.rewards.append(torch.Tensor([reward]))
+        self.rewards.append(torch.tensor([reward]))
         self.done.append(done)
-

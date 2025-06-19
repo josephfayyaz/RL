@@ -21,7 +21,7 @@ from agents.agent_ac import Agent_ac as Agent, Policy_ac as Policy
 #
 # args = parse_args()
 
-model= "/home/joseph/python-proj/1/Models/actor_critic/model_actor_critic_UDR_2_100K.mdl"
+model= "/home/joseph/python-proj/udr_ES/Models/actor_critic/model_actor_critic_3.mdl"
 device= "cuda"
 render= "True"
 episodes= 100
