@@ -9,8 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from stable_baselines3 import PPO  # or your RL library of choice
 import time
-import random, numpy as np
-import gym
+import random
 from datetime import datetime
 import csv
 from env.custom_hopper import *

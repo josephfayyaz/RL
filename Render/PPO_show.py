@@ -3,9 +3,9 @@ import os
 import ctypes
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-mujoco_path = "C:/.mujoco/mujoco210/bin"  # manually append library for running on windoes
-os.environ["PATH"] += ";" + mujoco_path
-ctypes.CDLL(os.path.join(mujoco_path, "mujoco210.dll"))
+# mujoco_path = "C:/.mujoco/mujoco210/bin"  # manually append library for running on windoes
+# os.environ["PATH"] += ";" + mujoco_path
+# ctypes.CDLL(os.path.join(mujoco_path, "mujoco210.dll"))
 import gym
 from env.custom_hopper import *
 
@@ -21,7 +21,7 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     # parser.add_argument('--model', default=None, type=str, help='Model path')
-    parser.add_argument('--model', default=r'D:\rl\RL-master\Models\PPO\PPO_Domain_cdr_ES_False_seed_14_(CustomHopper-cdr-v0_CustomHopper-target-v0).zip',
+    parser.add_argument('--model', default=r'/home/joseph/python-proj/udr_ES/Models/PPO/PPO_Domain_cdr_ES_False_seed_0_(CustomHopper-cdr-v0_CustomHopper-target-v0)_5000000.zip',
                         type=str, help='Model path')
 
     parser.add_argument('--device', default='cuda', type=str, help='network device [cpu, cuda]')
@@ -57,7 +57,7 @@ def test_saved_model(algo, env_id, model_path, num_episodes=1000):
 if __name__ == "__main__":
     # Example usage
     ALGO = args.algorithm
-    ENV_ID = 'CustomHopper-source-v0'  # Change to your specific environment
+    ENV_ID = 'CustomHopper-target-v0'  # Change to your specific environment
     MODEL_PATH = args.model  # './models/PPO_final_model.zip'  # Change to the path of your saved model
     NUM_EPISODES = 2000  # Number of episodes to test the agent
 
