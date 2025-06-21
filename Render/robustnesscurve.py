@@ -1,78 +1,85 @@
-import os,sys
-import ctypes
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-# __file__mujoco_path = "C:/.mujoco/mujoco210/bin"  # manually append library for running on windoes
-# os.environ["PATH"] += ";" + mujoco_path
-# ctypes.CDLL(os.path.join(mujoco_path, "mujoco210.dll"))
-import gym
+import os, sys, glob
 import numpy as np
 import matplotlib.pyplot as plt
-from stable_baselines3 import PPO  # or your RL library of choice
-import time
-import random
-from datetime import datetime
-import csv
-from env.custom_hopper import *
+import gym
+from stable_baselines3 import PPO
 
-# 1. Load your saved model
-model = PPO.load("/home/joseph/python-proj/udr_ES/Logs/csv/PPO_ES/PPO_Domain_source_ES_True_seed_14_CustomHopper_source_v0_CustomHopper.zip")
-algorithm = "PPO_ES"
-number_of_episodes=30
-# 2. Wrap the environment to inject ε-bounded noise
+# ---------- USER CONFIG -------------------------------------------------
+LOG_ROOT        = r"D:\rl\RL-yosef33333\Logs\csv"   # <— change once
+ALG_NAME        = "PPO_CDR_ES"                     # sub-folder name
+SEEDS           = [0, 14, 42]                      # which seeds exist
+N_EPISODES      = 30
+EPS_GRID        = np.linspace(0.0, 0.5, 15)
+SAVE_DIR        = "./show/plots"
+os.makedirs(SAVE_DIR, exist_ok=True)
+# IEEE-safe colours
+COL_ALGO        = {"PPO_CDR_ES": "#4E79A7", "PPO_UDR": "#F28E2B",
+                   "PPO_CDR": "#59A14F"}
+# ------------------------------------------------------------------------
+
 class ObsNoiseWrapper(gym.ObservationWrapper):
     def __init__(self, env, eps):
-        super().__init__(env)
-        self.eps = eps
+        super().__init__(env); self.eps = eps
     def observation(self, obs):
-        noise = np.random.uniform(-self.eps, self.eps, size=obs.shape)
-        return obs + noise
-import csv
-
-# 4b. Save results to CSV
+        return obs + self.np_random.uniform(-self.eps, self.eps, size=obs.shape)
 
 def make_noisy_env(eps):
-    base_env = gym.make("CustomHopper-target-v0")
-    return ObsNoiseWrapper(base_env, eps)
+    base = gym.make("CustomHopper-target-v0")
+    return ObsNoiseWrapper(base, eps)
 
-# 3. Evaluation function under a given ε
-def evaluate(model, eps, n_episodes):
-    env = make_noisy_env(eps)
-    returns = []
-    for _ in range(n_episodes):
-        obs = env.reset()
-        done = False
-        total_r = 0.0
+def evaluate(model, eps, n_epi):
+    env = make_noisy_env(eps); rets = []
+    for _ in range(n_epi):
+        done, obs, tot = False, env.reset(), 0.0
         while not done:
-            action, _ = model.predict(obs, deterministic=True)
-            obs, r, done, _ = env.step(action)
-            total_r += r
-        returns.append(total_r)
+            act, _ = model.predict(obs, deterministic=True)
+            obs, r, done, _ = env.step(act); tot += r
+        rets.append(tot)
     env.close()
-    return np.mean(returns)
+    return np.mean(rets)
 
-# 4. Sweep ε and record J(ε)
-epsilons = np.linspace(0.0, 0.5, 15)   # e.g. from no noise to ±0.5
-mean_returns = []
-for eps in epsilons:
-    jr = evaluate(model, eps, n_episodes=number_of_episodes)
-    mean_returns.append(jr)
-    print(f"ε={eps:.2f} → return={jr:.1f}")
+# ---------- load all seeds ----------------------------------------------
+seed_curves = []
+for seed in SEEDS:
+    mpath = glob.glob(os.path.join(LOG_ROOT, ALG_NAME,
+                                   f"*seed_{seed}*.zip"))
+    if not mpath:
+        print(f"[warn] model for seed {seed} not found"); continue
+    model = PPO.load(mpath[0])
+    seed_ret = [evaluate(model, eps, N_EPISODES) for eps in EPS_GRID]
+    seed_curves.append(seed_ret)
 
-csv_path = f"/home/joseph/python-proj/udr_ES/Render/csv_robustness/robustness_results_{algorithm}.csv"
-with open(csv_path, mode="w", newline="") as f:
-    writer = csv.writer(f)
-    writer.writerow(["epsilon", "mean_return"])
-    for eps, ret in zip(epsilons, mean_returns):
-        writer.writerow([eps, ret])
-print(f"Saved robustness results to {csv_path}")
+seed_curves = np.array(seed_curves)        # shape = (n_seed, n_eps)
 
-# 5. Plot the robustness curve
+# ---------- save CSV -----------------------------------------------------
+csv_out = os.path.join(
+            SAVE_DIR, f"robustness_results_{ALG_NAME}.csv")
+np.savetxt(csv_out, np.c_[EPS_GRID, seed_curves.T],
+           delimiter=",",
+           header="eps," + ",".join(f"seed{ s}" for s in SEEDS),
+           comments='')
+print(f"saved CSV -> {csv_out}")
+
+# ---------- averaged plot (main paper) -----------------------------------
 plt.figure(figsize=(6,4))
-plt.plot(epsilons, mean_returns, marker='o')
-plt.xlabel("Perturbation noise size ε")
-plt.ylabel("Avg. return J(ε)")
-plt.title(f"Robustness Curve for {algorithm} (mean over {number_of_episodes} episodes)")
-plt.grid(True)
+mean, std = seed_curves.mean(0), seed_curves.std(0)
+plt.plot(EPS_GRID, mean, lw=2, color=COL_ALGO.get(ALG_NAME, "#333"))
+plt.fill_between(EPS_GRID, mean-std, mean+std, alpha=0.25,
+                 color=COL_ALGO.get(ALG_NAME, "#333"))
+plt.xlabel(r"Perturbation noise size $\varepsilon$")
+plt.ylabel(r"Avg. return $J(\varepsilon)$")
+plt.title(f"Robustness Curve — {ALG_NAME} (n={len(SEEDS)})")
 plt.tight_layout()
-plt.savefig(f"/home/joseph/python-proj/udr_ES/Render/plots/noise_robustness_curve_{algorithm}.png", dpi=300)
-# plt.show()
+plt.grid(alpha=.4)
+plt.savefig(os.path.join(SAVE_DIR, f"robustness_{ALG_NAME}.png"),
+            dpi=300)
+
+# ---------- per-seed appendix plot ---------------------------------------
+plt.figure(figsize=(6,4))
+for s, curve in zip(SEEDS, seed_curves):
+    plt.plot(EPS_GRID, curve, label=f"seed {s}", lw=1.3)
+plt.legend(); plt.title(f"Robustness curves by seed — {ALG_NAME}")
+plt.xlabel(r"$\varepsilon$"); plt.ylabel("Return"); plt.grid(alpha=.4)
+plt.tight_layout()
+plt.savefig(os.path.join(SAVE_DIR,
+            f"robustness_{ALG_NAME}_by_seed.png"), dpi=300)
