@@ -1,220 +1,126 @@
-# compute_metrics_multiple_seeds.py
+#!/usr/bin/env python3
+"""
+infoextraction.py   — extracts the five key metrics from all per-seed CSVs
+and generates publication-ready bar grids (IEEE colour-blind palette).
+"""
 
-import os, glob, re
+import os
+import glob
+import argparse
+from pathlib import Path
 import numpy as np
 import pandas as pd
-from scipy.integrate import trapz
-import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.pyplot as plt
 
-# --- Configuration ---
-data_dir         = r"D:\rl\RL-master\Logs\csv"
-success_threshold= 1000
-seeds            = [0, 14, 42]
-metrics          = [
-    'Mean Return',
-    '5th %-ile Return',
-    'Success Rate',
-    'Steps→1 000',
-    'Robustness AUC'
+# =============== configuration =================================================
+SUCCESS_THRESHOLD = 1_000          # ≥1000  == task success
+METRIC_LABELS = [
+    "Mean Return",
+    "5th %-ile Return",
+    "Success Rate",
+    "Steps→Success",               # clearer than “Steps→1 000”
+    "Robustness AUC"
 ]
-savepath         = r".\show\plots\\"
-os.makedirs(savepath, exist_ok=True)
-# --- Plot style configuration (edit here) ---
-sns.set_theme(style="whitegrid", palette=["#4477AA","#4988B0","#2DC6DA"])
-FONT_TITLE  = 16
-FONT_LABEL  = 14
-FONT_TICKS  = 12
-BAR_WIDTH   = 0.6
-FIGSIZE_GRID    = (18, 10)
-FIGSIZE_SINGLE  = (8, 5)
-DPI              = 300
 
-# --- Helper to auto-detect columns ---
-def detect_columns(df, for_time=False):
-    cols = df.columns.tolist()
-    if for_time:
-        xcol = next((c for c in cols if re.search(r'timestep|step', c, re.I)), None)
-    else:
-        xcol = next((c for c in cols if re.search(r'episode|epis|iter|^index$', c, re.I)), None)
-    ycol = next((c for c in cols if re.search(r'return|reward', c, re.I)), None)
-    return (xcol or cols[0], ycol or cols[1 if len(cols)>1 else 0])
+IEEE_COLOURS = sns.color_palette("colorblind", 6)
+SEED_PALETTE = sns.color_palette("colorblind")   # auto-adjusts to n seeds
+sns.set_theme(style="whitegrid")
 
-# --- Gather metrics for each (algo,seed) ---
-all_rows = []
-for algo in sorted(os.listdir(data_dir)):
-    path = os.path.join(data_dir, algo)
-    if not os.path.isdir(path): continue
-    files = glob.glob(os.path.join(path, "*.csv"))
-    for seed in seeds:
-        tfile = next((f for f in files if f"seed_{seed}" in f and "learning_curve" in f), None)
-        efile = next((f for f in files if f"seed_{seed}" in f and "1000000" not in f), None)
-        if not tfile or not efile:
+# =============== helper functions ==============================================
+def load_metric_csv(csv_file: Path) -> pd.DataFrame:
+    """Each learning-curve CSV has columns:
+       timestep, mean_return, cvar5, success_rate, robustness_auc
+    """
+    df = pd.read_csv(csv_file)
+    return df
+
+def steps_to_success(df: pd.DataFrame) -> int:
+    """Return the first timestep where moving-average mean_return ≥ threshold"""
+    mv = df["mean_return"].rolling(window=5, min_periods=1).mean()
+    reached = df.loc[mv >= SUCCESS_THRESHOLD, "timestep"]
+    return int(reached.iloc[0]) if not reached.empty else np.nan
+
+# =============== main workflow =================================================
+def main(log_root: str, out_dir: str):
+    log_root = Path(log_root)
+    out_dir  = Path(out_dir);  out_dir.mkdir(parents=True, exist_ok=True)
+
+    # algorithm folders = immediate children
+    alg_dirs = [d for d in log_root.iterdir() if d.is_dir()]
+    summary_rows = []
+
+    for alg in sorted(alg_dirs):
+        csvs = sorted(alg.glob("learning_curve_*seed_*.csv"))
+        if not csvs:
+            print(f"[warn] no CSVs in {alg}")
             continue
 
-        df_t = pd.read_csv(tfile)
-        tc, rc = detect_columns(df_t, for_time=True)
-        ts, mr = df_t[tc].values, df_t[rc].values
-        auc = trapz(mr, ts)
-        step_thr = np.nan
-        if np.any(mr >= success_threshold):
-            step_thr = ts[mr >= success_threshold][0]
+        per_seed_vals = []
 
-        df_e = pd.read_csv(efile)
-        ec, rr = detect_columns(df_e, for_time=False)
-        eps, rets = df_e[ec].values, df_e[rr].values
-        mean_r = rets.mean()
-        p5_r   = np.percentile(rets, 5)
-        sr     = (rets >= success_threshold).mean()
+        for csv in csvs:
+            seed = int(csv.stem.split("seed_")[-1])
+            df   = load_metric_csv(csv)
+            per_seed_vals.append({
+                "Algorithm"   : alg.name,
+                "Seed"        : seed,
+                "Mean Return" : df["mean_return"].iloc[-1],
+                "5th %-ile Return": df["cvar5"].iloc[-1],
+                "Success Rate": df["success_rate"].iloc[-1],
+                "Steps→Success": steps_to_success(df),
+                "Robustness AUC": df["robustness_auc"].iloc[-1]
+            })
 
-        all_rows.append({
-            'Algorithm': algo,
-            'Seed':       seed,
-            'Mean Return':      mean_r,
-            '5th %-ile Return': p5_r,
-            'Success Rate':     sr,
-            'Steps→1 000':      step_thr,
-            'Robustness AUC':   auc
-        })
+        # ---------- per-seed bar-plot (appendix) ------------------------------
+        seed_df = pd.DataFrame(per_seed_vals).melt(
+            id_vars=["Seed"], var_name="Metric", value_name="Value",
+            value_vars=METRIC_LABELS)
+        g = sns.catplot(
+            data=seed_df, x="Metric", y="Value", hue="Seed",
+            kind="bar", palette=SEED_PALETTE, height=4, aspect=1.8)
+        g.set_xticklabels(rotation=30, ha="right")
+        g.despine(left=True)
+        g.fig.suptitle(f"{alg.name}: per-seed metrics", y=1.02, fontsize=10)
+        g.savefig(out_dir / f"{alg.name}_per_seed.png", dpi=300)
+        plt.close(g.fig)
 
-# --- Build DataFrame ---
-df_raw     = pd.DataFrame(all_rows).set_index(['Algorithm','Seed'])
-metric_dfs = {m: df_raw[m].unstack('Seed') for m in metrics}
+        # ---------- average & std  -------------------------------------------
+        df_alg = pd.DataFrame(per_seed_vals).drop(columns=["Seed"])
+        avg = df_alg.groupby("Algorithm").mean().reset_index()
+        std = df_alg.groupby("Algorithm").std().reset_index()
+        avg["std"] = std[METRIC_LABELS].values.tolist()
+        summary_rows.append(avg)
 
-# --- 1) Combined 2x3 grid using seaborn ---
-fig, axes = plt.subplots(2, 3, figsize=FIGSIZE_GRID)
-axes = axes.flatten()
-x = np.arange(len(metric_dfs[metrics[0]].index))
-algos = metric_dfs[metrics[0]].index
+    # ---------- summary table -------------------------------------------------
+    summary = pd.concat(summary_rows, ignore_index=True)
+    summary.to_csv(out_dir / "metric_summary.csv", index=False)
 
-for ax, metric in zip(axes, metrics):
-    mdf = metric_dfs[metric]
-    sns.barplot(
-        data=mdf.reset_index().melt(id_vars='Algorithm', var_name='Seed', value_name=metric),
-        x='Algorithm',
-        y=metric,
-        hue='Seed',
-        ax=ax,
-        palette=None,
-        dodge=True
-    )
-    ax.set_title(metric, fontsize=FONT_TITLE)
-    ax.set_xlabel('')
-    ax.set_ylabel(metric, fontsize=FONT_LABEL)
-    ax.tick_params(axis='x', rotation=30, labelsize=FONT_TICKS)
-    ax.tick_params(axis='y', labelsize=FONT_TICKS)
-    # annotate bars
+    # ---------- grid figure ---------------------------------------------------
+    melt = summary.melt(id_vars=["Algorithm"], var_name="Metric",
+                        value_name="Value")
+    g = sns.catplot(
+        data=melt, x="Algorithm", y="Value", hue="Algorithm",
+        col="Metric", col_wrap=3, sharey=False, height=3.0,
+        kind="bar", palette=IEEE_COLOURS, legend=False)
 
-axes[0].legend(title='Seed', fontsize=FONT_TICKS, title_fontsize=FONT_LABEL, loc='upper right')
-plt.tight_layout(pad=3)
-plt.savefig(savepath + 'all_metrics_grid_seaborn.png', dpi=DPI)
+    for ax in g.axes.flatten():
+        ax.set_xlabel("")
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=25, ha="right")
 
+    g.fig.tight_layout()
+    g.fig.subplots_adjust(top=0.90)
+    g.fig.suptitle("Five key metrics (mean over seeds ± sd)")
+    g.savefig(out_dir / "five_metric_grid.png", dpi=400)
+    plt.close(g.fig)
 
-# --- 2) Individual metric plots ---
-for metric in metrics:
-    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-    mdf = metric_dfs[metric]
-    sns.barplot(
-        data=mdf.reset_index().melt(id_vars='Algorithm', var_name='Seed', value_name=metric),
-        x='Algorithm',
-        y=metric,
-        hue='Seed',
-        ax=ax,
-        palette=None,
-        dodge=True
-    )
-    ax.set_title(metric, fontsize=FONT_TITLE)
-    ax.set_xlabel('')
-    ax.set_ylabel(metric, fontsize=FONT_LABEL)
-    ax.tick_params(axis='x', rotation=30, labelsize=FONT_TICKS)
-    ax.tick_params(axis='y', labelsize=FONT_TICKS)
-    ax.legend(title='Seed', fontsize=FONT_TICKS, title_fontsize=FONT_LABEL)
-    plt.tight_layout(pad=3)
-    plt.savefig(f"{savepath}{metric.replace(' ','_')}_seaborn.png", dpi=DPI)
-    
+    print(f"✓  figures + CSV saved to {out_dir}")
 
-# --- 3) Average Across Seeds ---
-# Compute and plot average metric per algorithm
-avg_tables = {m: table.mean(axis=1) for m, table in metric_dfs.items()}
-for metric, series in avg_tables.items():
-    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-    sns.barplot(
-        x=series.index,
-        y=series.values,
-        ax=ax,
-        palette=["#4477AA"]
-    )
-    ax.set_title(f"Average {metric} (across seeds)", fontsize=FONT_TITLE)
-    ax.set_ylabel(metric, fontsize=FONT_LABEL)
-    ax.set_xlabel('Algorithm', fontsize=FONT_LABEL)
-    ax.tick_params(axis='x', rotation=30, labelsize=FONT_TICKS)
-    ax.tick_params(axis='y', labelsize=FONT_TICKS)
-    for container in ax.containers:
-        ax.bar_label(container, fmt='%.2f', padding=2, fontsize=FONT_TICKS)
-
-    plt.tight_layout()
-    avg_file = f"avg_{metric.replace(' ', '_')}.png"
-    plt.savefig(os.path.join(savepath, avg_file), dpi=DPI)
-    plt.close()
-
-
-
-# --- 4) Plot robustness curves (return‐threshold vs success rate) ---
-import numpy as np
-
-# First, re‐load all episode returns into a dict:
-# returns_data[algorithm][seed] = 1D numpy array of episode returns
-returns_data = {}
-for algo in sorted(os.listdir(data_dir)):
-    algo_path = os.path.join(data_dir, algo)
-    if not os.path.isdir(algo_path):
-        continue
-    returns_data[algo] = {}
-    files = glob.glob(os.path.join(algo_path, "*.csv"))
-    for seed in seeds:
-        epi_file = next((f for f in files
-                         if f"seed_{seed}" in f and "1000000" not in f), None)
-        if epi_file is None:
-            continue
-        df_ep = pd.read_csv(epi_file)
-        _, ret_col = detect_columns(df_ep, for_time=False)
-        returns_data[algo][seed] = df_ep[ret_col].values
-
-# Build a common grid of thresholds
-all_returns = np.hstack([rets for algo in returns_data for rets in returns_data[algo].values()])
-thr_min, thr_max = np.min(all_returns), np.max(all_returns)
-thresholds = np.linspace(thr_min, thr_max, 200)
-
-# 4a) One curve per algorithm (averaging seeds)
-for algo, seed_dict in returns_data.items():
-    # compute mean success‐rate across seeds
-    succ_rates = []
-    for τ in thresholds:
-        # for each seed, compute fraction of episodes ≥ τ, then average over seeds
-        per_seed = [np.mean(returns_data[algo][s] >= τ) for s in seed_dict]
-        succ_rates.append(np.mean(per_seed))
-
-    plt.figure(figsize=(6,4))
-    plt.plot(thresholds, succ_rates, lw=2)
-    plt.title(f"Robustness Curve (averaged) — {algo}", fontsize=FONT_TITLE)
-    plt.xlabel("Return threshold", fontsize=FONT_LABEL)
-    plt.ylabel("fraction of runs exceeding the threshold", fontsize=FONT_LABEL)
-    plt.grid(True, linestyle="--", alpha=0.5)
-    plt.tight_layout()
-    plt.savefig(os.path.join(savepath, f"robustness_curve_{algo}.png"), dpi=DPI)
-    plt.close()
-
-# 4b) (Optionally) One curve per seed, per algorithm
-for algo, seed_dict in returns_data.items():
-    plt.figure(figsize=(6,4))
-    for seed in seed_dict:
-        succ_rates = [np.mean(returns_data[algo][seed] >= τ) for τ in thresholds]
-        plt.plot(thresholds, succ_rates, label=f"seed {seed}", lw=1.5)
-    plt.title(f"Robustness Curves — {algo}", fontsize=FONT_TITLE)
-    plt.xlabel("Return threshold", fontsize=FONT_LABEL)
-    plt.ylabel("fraction of runs exceeding the threshold", fontsize=FONT_LABEL)
-    plt.legend(fontsize=FONT_TICKS)
-    plt.grid(True, linestyle="--", alpha=0.5)
-    plt.tight_layout()
-    plt.savefig(os.path.join(savepath, f"robustness_curves_{algo}_by_seed.png"), dpi=DPI)
-    plt.close()
+# ==============================================================================
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    p.add_argument("--log_root", type=str, required=True,
+                   help="root folder that contains one sub-folder per algorithm")
+    p.add_argument("--out_dir",  type=str, default="./figures",
+                   help="where to save plots / tables")
+    args = p.parse_args()
+    main(args.log_root, args.out_dir)
