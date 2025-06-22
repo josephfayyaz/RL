@@ -55,7 +55,7 @@ print(f'training on {torch.cuda.get_device_name(torch.cuda.current_device()) }' 
 
 
 HP_PATH = "../../models/PPO/best_hyperparameters.json"
-ENV_ID = f'CustomHopper-{args.Domain}-v0'
+ENV_ID = f'{args.Domain}-v0'
 EVAL_ENV = 'CustomHopper-target-v0'  # Change to your specific environment
 SAVE_PATH = '../../models/PPO/'
 LOG_PATH     = '../../Logs/PPO_episode_rewards/'
@@ -220,7 +220,7 @@ def train_agent(algo, env_id, eval_env_id, USE_entropy_scheduler, total_timestep
 
     learning_curve_cb = LearningCurveCallback(
         eval_env=eval_env,
-        csv_path=f"../../Logs/Learning_Curve/learning_curve_{algo}_Domain _{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{seed}_{total_timesteps}.csv",
+        csv_path=f"../../Logs/Learning_Curve/learning_curve_{algo}_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{seed}_{total_timesteps}.csv",
         eval_interval=5000,
         n_eval_episodes=5,
         verbose=1
@@ -231,7 +231,7 @@ def train_agent(algo, env_id, eval_env_id, USE_entropy_scheduler, total_timestep
         best_model_save_path=SAVE_PATH,
         log_path=log_path,
         eval_freq= 10**9 // args.n_envs,   # or whatever you choose
-        prefix=f"EVAL_BEST_{algo}_Domain _{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{seed}",
+        prefix=f"EVAL_BEST_{algo}_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{seed}",
         n_eval_episodes=10,
         deterministic=True,
         render=False,
@@ -252,7 +252,7 @@ def train_agent(algo, env_id, eval_env_id, USE_entropy_scheduler, total_timestep
         )
     # 3) pass that list into learn()
     model.learn(total_timesteps=total_timesteps, callback=callbacks)
-    modelpath=os.path.join(save_path, f"{algo}_Domain_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{seed}_({env_id}_{eval_env_id})_{total_timesteps}")
+    modelpath=os.path.join(save_path, f"{algo}_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{seed}_({env_id}_{eval_env_id})_{total_timesteps}")
     model.save(modelpath)
     print(f"Model saved to {modelpath}")
 def main():
@@ -272,7 +272,7 @@ def main():
         envname=args.Domain
         evalenvname="source"
 
-        csv_filename = os.path.join(LOG_PATH, f"{args.algorithm}_Domain_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{run_seed}_{Total_timesteps}({envname},{evalenvname}).csv")
+        csv_filename = os.path.join(LOG_PATH, f"{args.algorithm}_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{run_seed}_{Total_timesteps}({envname},{evalenvname}).csv")
 
         train_agent(args.algorithm, ENV_ID,EVAL_ENV,args.Entropy_Scheduling, Total_timesteps, SAVE_PATH, LOG_PATH,run_seed,csv_filename)
 if __name__ == "__main__":

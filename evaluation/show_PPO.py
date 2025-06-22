@@ -21,7 +21,7 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     # parser.add_argument('--model', default=None, type=str, help='Model path')
-    parser.add_argument('--model', default=r'/home/joseph/python-proj/udr_ES/models/PPO_runtime_tmp/PPO_Domain_cdr_ES_False_seed_0_CustomHopper_cdr_v0_CustomHopper_target_5000000.zip',
+    parser.add_argument('--model', default=r'/home/joseph/python-proj/udr_ES/models/PPO_runtime_tmp/PPO_cdr_ES_False_seed_0_CustomHopper_cdr_v0_target_5000000.zip',
                         type=str, help='Model path')
 
     parser.add_argument('--device', default='cuda', type=str, help='network device [cpu, cuda]')
