@@ -1,4 +1,4 @@
-/env/__init__.py
+/src/env/__init__.py
 /archive_scripts/env/__init__.py
 /archive_scripts/colab_starting_code.ipynb
 /model.mdl
@@ -8,6 +8,10 @@
 /archive_scripts/README.md
 /custom-files/logs/PPO_1/events.out.tfevents.1747412997.joseph-ubuntu.36168.0
 /.idea/git_toolbox_blame.xml
-/training/wandb/
-/training/runs/
+/src/training/wandb/
+/src/training/runs/
 /archive_scripts/
+/wandb/
+/src/training/wandb/
+/src/training/PPO_UDR_ES_5M_tmp.py
+/models/PPO/1M/

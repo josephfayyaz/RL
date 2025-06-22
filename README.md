@@ -23,22 +23,22 @@ The project combines classic and modern RL techniques:
 ├── Logs/                                # CSV logs and WandB (if used)
 │   ├── actor_critic/
 │   ├── baseline/
-│   ├── csv/
-│   └── PPO/
+│   ├── PPO_episode_rewards/
+│   └── PPO_runtime_tmp/
 │
-├── Models/                              # Trained model checkpoints
+├── models/                              # Trained model checkpoints
 │   ├── actor_critic/
-│   ├── PPO/
+│   ├── PPO_runtime_tmp/
 │   └── reinforce_baseline/
 │
-├── Render/                              # Optional rendering or video files
+├── evaluation/                              # Optional rendering or video files
 │
 ├── training/                            # Main training scripts
 │   ├── wandb/                           # WandB config/data (if used)
 │   ├── PPO_Hyperparameter_Calculation.py
-│   ├── PPO_UDR_ES_CDR.py
+│   ├── Train_PPO_UDR_ES_CDR.py
 │   ├── Train_Actor_Critic.py
-│   ├── Train_Baseline.py
+│   ├── Train_Reinforce_Baseline.py
 │   └── Train_Reinforce_vanila.py
 │
 ├── utils/
@@ -107,13 +107,13 @@ Make sure MuJoCo is installed and licensed correctly.
 ```bash
 python training/Train_Reinforce_vanila.py
 python training/Train_Actor_Critic.py
-python training/Train_Baseline.py
+python training/Train_Reinforce_Baseline.py
 ```
 
 ### 🤖 PPO with UDR + ES-CDR
 
 ```bash
-python training/PPO_UDR_ES_CDR.py --seed 0 --train_steps 350000
+python training/Train_PPO_UDR_ES_CDR.py --seed 0 --train_steps 350000
 ```
 
 ### 🔬 PPO Hyperparameter Sweep
@@ -131,8 +131,9 @@ python training/PPO_Hyperparameter_Calculation.py
 - You can visualize performance using:
 
 ```python
-from utils.metric_extraction import plot_training_curve
-plot_training_curve("Logs/csv/ppo_run.csv")
+from evaluation.plot_csv_scripts.metric_extraction import plot_training_curve
+
+plot_training_curve("Logs/PPO_episode_rewards/ppo_run.PPO_episode_rewards")
 ```
 
 ---
