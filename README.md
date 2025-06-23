@@ -9,7 +9,7 @@ The project combines classic and modern RL techniques:
 
 To get a better understanding of the Gym Hopper environment, click on the video below:
 
-![Gym Hopper Video](https://youtu.be/jtXiTP96wow?si=aE64b0SOUBKXv4J7)
+[![Gym Hopper Video](https://img.youtube.com/vi/jtXiTP96wow/0.jpg)](https://youtu.be/jtXiTP96wow?si=aE64b0SOUBKXv4J7)
 
 
 ---
