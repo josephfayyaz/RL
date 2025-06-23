@@ -1,11 +1,11 @@
 # 🦿 Reinforcement Learning for Custom Hopper with Domain Randomization
 
-This repository presents a comprehensive study on **reinforcement learning (RL)** algorithms applied to a **custom MuJoCo Hopper** environment. Our goal is to develop robust control policies through **domain randomization**, **curriculum learning**, and **policy gradient methods**.
+his repository presents a comprehensive study on **reinforcement learning (RL)** algorithms applied to a **custom MuJoCo Hopper** environment. The project aims to build robust locomotion policies under uncertain dynamics using:
 
-The project combines classic and modern RL techniques:
-- **REINFORCE & Actor-Critic** (from-scratch implementations)
-- **Proximal Policy Optimization (PPO)** (via Stable-Baselines3)
-- **Uniform Domain Randomization (UDR)** and **Entropy-based Curriculum Domain Randomization (ES-CDR)**
+- Classic Policy Gradient Methods: REINFORCE, Actor-Critic
+- Advanced On-Policy Algorithms: Proximal Policy Optimization (PPO)
+- Robustness Techniques: Domain Randomization (UDR), Curriculum Learning (CDR), Entropy Scheduling (ES)
+
 
 To get a better understanding of the Gym Hopper environment, click on the video below:
 
@@ -18,43 +18,37 @@ To get a better understanding of the Gym Hopper environment, click on the video 
 
 ```bash
 .
-├── agents/                              # (Optional) future agents folder
-├── env/                                 # Custom MuJoCo environment
-│   ├── assets/
-│   ├── __init__.py
-│   ├── custom_hopper.py                 # Custom Hopper environment with DR
-│   └── mujoco_env.py
+├── src/                                  # Core codebase
+│   ├── agents/                           # (Optional) agent definitions
+│   ├── env/                              # Custom MuJoCo Hopper environment
+│   ├── evaluation/                       # Evaluation utilities/scripts
+│   └── training/                         # Training scripts for all agents
 │
-├── Logs/                                # CSV logs and WandB (if used)
+├── evaluation/
+│   └── plot_csv_scripts/                 # Scripts to visualize learning curves and metrics
+│
+├── Logs/                                 # Training logs, episode returns, sweep outputs
 │   ├── actor_critic/
 │   ├── baseline/
+│   ├── Learning_Curve/
+│   ├── PPO_callback/
 │   ├── PPO_episode_rewards/
-│   └── PPO_runtime_tmp/
-│
-├── models/                              # Trained model checkpoints
-│   ├── actor_critic/
+│   ├── PPO_robustness/
 │   ├── PPO_runtime_tmp/
+│   └── PPO_sweep/
+│
+├── models/                               # Saved model checkpoints
+│   ├── actor_critic/
+│   ├── PPO/
 │   └── reinforce_baseline/
 │
-├── evaluation/                              # Optional rendering or video files
+├── render/                               # Visual results (e.g., gif, mp4)
+│   └── plots/
 │
-├── training/                            # Main training scripts
-│   ├── wandb/                           # WandB config/data (if used)
-│   ├── PPO_Hyperparameter_Calculation.py
-│   ├── Train_PPO_UDR_ES_CDR.py
-│   ├── Train_Actor_Critic.py
-│   ├── Train_Reinforce_Baseline.py
-│   └── Train_Reinforce_vanila.py
-│
-├── utils/
-│   └── metric_extraction.py             # CSV parsing, plotting utilities
-│
-├── wandb/                               # WandB cache directory (gitignored)
-├── .gitignore
-├── __init__.py
+├── requirements.txt
 └── README.md
-```
 
+```
 ---
 
 ## 🧪 Environments & Randomization
@@ -80,86 +74,115 @@ The environment is based on a custom subclass of the MuJoCo Hopper (`custom_hopp
 
 ---
 
-## 🛠️ Setup Instructions
 
-### ✅ Dependencies (tested on Ubuntu 22.04)
+## ⚙️ Environment Setup
+
+Install the required packages:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Essential packages:
-
-```text
-gym==0.21.0
-stable-baselines3==1.7.0
-mujoco-py>=2.1,<2.2
-cython<3
-scipy
-Jinja2==3.1.2
-importlib-metadata==4.13.0
-patchelf
-```
-
-Make sure MuJoCo is installed and licensed correctly.
+You’ll need MuJoCo 2.1+ properly installed and licensed. Refer to:
+👉 https://github.com/openai/mujoco-py#install-mujoco
 
 ---
 
-## 🚀 Training Commands
+## 🧪 Training
 
-### 🎯 REINFORCE / Actor-Critic
-
-```bash
-python training/Train_Reinforce_vanila.py
-python training/Train_Actor_Critic.py
-python training/Train_Reinforce_Baseline.py
-```
-
-### 🤖 PPO with UDR + ES-CDR
+From the root directory, run:
 
 ```bash
-python training/Train_PPO_UDR_ES_CDR.py --seed 0 --train_steps 350000
-```
+# REINFORCE
+python src/training/Train_Reinforce_vanila.py
 
-### 🔬 PPO Hyperparameter Sweep
+# REINFORCE with baseline
+python src/training/Train_Baseline.py
 
-```bash
-python training/PPO_Hyperparameter_Calculation.py
+# Actor-Critic
+python src/training/Train_Actor_Critic.py
+
+# PPO + UDR + ES-CDR
+python src/training/PPO_UDR_ES_CDR.py --Domain cdr --Entropy_Scheduling True --seed 0
 ```
 
 ---
 
-## 📊 Logging & Evaluation
+## 🔬 Hyperparameter Optimization
 
-- All CSV logs are stored in `Logs/csv/`
-- Trained models saved under `Models/`
-- You can visualize performance using:
+```bash
+python src/training/PPO_Hyperparameter_Calculation.py
+```
 
-```python
-from evaluation.plot_csv_scripts.metric_extraction import plot_training_curve
+You can adjust sweep parameters via JSON or inline config.
 
-plot_training_curve("Logs/PPO_episode_rewards/ppo_run.PPO_episode_rewards")
+---
+
+## 📊 Logging & Visualization
+
+Training metrics (returns, entropy, etc.) are saved as CSV in the `Logs/` directory.
+
+To plot results:
+
+```bash
+python evaluation/plot_csv_scripts/plot_metrics.py
+```
+
+Or use the built-in metric utilities in `src/evaluation`.
+
+---
+
+## 🤖 Custom Environment
+
+Implemented in `src/env/custom_hopper.py`, our environment introduces:
+
+- Dynamic randomization of:
+  - Mass, friction, damping, init pose
+- UDR: Resampled every episode
+- CDR + ES: Difficulty increases based on policy performance and entropy
+
+---
+
+## 🧠 PPO + Curriculum Domain Randomization (CDR) + Entropy Scheduling (ES)
+
+This project extends PPO with **adaptive training difficulty** using:
+
+### 🔁 Curriculum Domain Randomization (CDR)
+CDR gradually increases the range of domain parameters (e.g., torso mass, friction) during training, helping the agent:
+- First master simple dynamics.
+- Then adapt to complex, realistic scenarios.
+
+Use it with:
+```bash
+--Domain cdr
+```
+
+### 📉 Entropy Scheduling (ES)
+ES monitors the **policy’s return entropy**. When the agent is confident (low entropy), it:
+- Advances the curriculum level.
+- Makes the environment harder.
+
+Enable it with:
+```bash
+--Entropy_Scheduling True
+```
+
+### 🧪 Example PPO + CDR + ES Command
+```bash
+python src/training/PPO_UDR_ES_CDR.py --Domain cdr --Entropy_Scheduling True --seed 0
 ```
 
 ---
 
 ## 📈 Sample Results
 
-| Curriculum Level | Avg Return | Std Dev | Entropy |
-|------------------|------------|---------|---------|
-| Level 1          | 810        | 60      | 0.95    |
-| Level 2          | 720        | 82      | 1.20    |
-| Level 3          | 680        | 90      | 1.50    |
+| Level | Mean Return | Std Dev | Return Entropy |
+|-------|-------------|---------|----------------|
+| 1     | 820         | ±50     | 1.02           |
+| 2     | 710         | ±70     | 1.30           |
+| 3     | 665         | ±85     | 1.48           |
 
 ---
-
-## 👥 Project Participants
-
-Please list contributors here:
-
-- **Pishool** – Custom environment design, algorithm implementation, evaluation
-- *(Add names and roles as needed)*
-
 ---
 
 ## 📚 References & Acknowledgements
