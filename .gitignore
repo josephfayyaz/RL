@@ -15,3 +15,4 @@
 /src/training/wandb/
 /src/training/PPO_UDR_ES_5M_tmp.py
 /models/PPO/1M/
+/models/PPO/checkpoints/
