@@ -9,7 +9,9 @@ his repository presents a comprehensive study on **reinforcement learning (RL)**
 
 To get a better understanding of the Gym Hopper environment, click on the video below:
 
-[![Gym Hopper Video](https://img.youtube.com/vi/jtXiTP96wow/0.jpg)](https://youtu.be/jtXiTP96wow?si=aE64b0SOUBKXv4J7)
+[//]: # ([![Gym Hopper Video]&#40;https://img.youtube.com/vi/jtXiTP96wow/0.jpg&#41;]&#40;https://youtu.be/jtXiTP96wow?si=aE64b0SOUBKXv4J7&#41;)
+
+[![Watch the training demo](render/plots/hopper_animation.gif)](https://youtu.be/jtXiTP96wow?si=aE64b0SOUBKXv4J7&#41)
 
 
 ---
