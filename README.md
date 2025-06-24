@@ -30,7 +30,7 @@ his repository presents a comprehensive study on **reinforcement learning (RL)**
 │   ├── evaluation/                       # Evaluation utilities/scripts
 │   └── training/                         # Training scripts for all agents
 │
-│                    # Scripts to visualize learning curves and metrics
+│                 
 │
 ├── Logs/                                 # Training logs, episode returns, sweep outputs
 │   ├── actor_critic/
