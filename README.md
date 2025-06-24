@@ -35,7 +35,7 @@ his repository presents a comprehensive study on **reinforcement learning (RL)**
 │   ├── PPO_episode_rewards/          #  ⇢ per-episode returns
 │   ├── PPO_robustness/               #  ⇢ domain-randomisation runs
 │   ├── PPO_runtime_tmp/              #  ⇢ scratch & tmp logs
-│   ├── actor_critic/                 #  ⇢ A2C/AC experiments
+│   ├── actor_critic/                 #  ⇢ AC experiments
 │   └── baseline/                     #  ⇢ REINFORCE baseline runs
 │
 ├── models/                          
