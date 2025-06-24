@@ -27,9 +27,6 @@ import shutil
 from stable_baselines3.common.evaluation import evaluate_policy
 
 
-
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--n-episodes', default=1000000, type=int, help='Number of training episodes')
@@ -270,7 +267,7 @@ def main():
     # regenerate timestamp or include seed
 
         envname=args.Domain
-        evalenvname="source"
+        evalenvname="target"
 
         csv_filename = os.path.join(LOG_PATH, f"{args.algorithm}_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{run_seed}_{Total_timesteps}({envname},{evalenvname}).csv")
 
