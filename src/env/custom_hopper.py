@@ -22,9 +22,8 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
         self.original_masses = np.copy(self.sim.model.body_mass[1:])  # [torso, thigh, leg, foot]
 
         if domain == 'udr':
-            # Mass scaling ranges for each body part (torso, thigh, leg, foot)
+            self.sim.model.body_mass[1] *= 0.7
             self.udr_mass_ranges = {
-                0: (0.5, 1.5),  # torso
                 1: (0.5, 1.5),  # thigh
                 2: (0.5, 1.5),  # leg
                 3: (0.5, 1.5),  # foot
@@ -43,10 +42,10 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
         if self.domain == 'udr':
 
             randomized_masses = self.original_masses.copy()
-            for i in range(len(randomized_masses)):
+            for i in self.udr_mass_ranges:
                 low, high = self.udr_mass_ranges[i]
                 scale = np.random.uniform(low, high)
-                randomized_masses[i] *= scale
+                randomized_masses[i - 1] *= scale  # shift index (body index - 1)
             return randomized_masses
 
         elif self.domain == 'cdr':
@@ -75,70 +74,40 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
         self.do_simulation(a, self.frame_skip)
         posafter, height, ang = self.sim.data.qpos[0:3]
 
-        obs    = self._get_obs()
+        obs = self._get_obs()
         height = self.sim.data.qpos[1]
-        angle  = self.sim.data.qpos[2]
+        angle = self.sim.data.qpos[2]
 
-        # 2) Termination checks (milder thresholds)
-        nan_fall        = not np.isfinite(obs).all()
-        max_velocity    = np.any(np.abs(self.sim.data.qvel) > 23.0)
-        fallen_too_low  = height < 0.7     # allow a bit more crouch
-        jumped_too_high = height > 2.0     # same upper bound
-        tilt_too_far    = abs(angle) > 1.1 # ~69°, more forgiving
+        nan_fall = not np.isfinite(obs).all()
+        max_velocity = np.any(np.abs(self.sim.data.qvel) > 23.0)
+        fallen_too_low = height < 0.7
+        jumped_too_high = height > 2.0
+        tilt_too_far = abs(angle) > 1.1
 
         done = (
-            nan_fall
-            or max_velocity
-            or fallen_too_low
-            or jumped_too_high
-            or tilt_too_far
+            nan_fall or max_velocity or fallen_too_low or jumped_too_high or tilt_too_far
         )
 
-                # 1) Forward reward (linear)
-        forward_vel    = (posafter - posbefore) / self.dt
-        #forward_reward = forward_vel   #chaneged in episode 18000
+        forward_vel = (posafter - posbefore) / self.dt
         backward_penalty = 2.0 * max(0.0, -forward_vel)
         forward_reward = max(0.0, forward_vel)
-
-        #clipped_forward  = np.clip(forward_reward, 0.0, 3.0) # 2) Clip & speed‐center around 2.5 m/s   #REMOVED IN EPISODE 18000
-        speed_term = -0.1 * (forward_vel - 2.5)**2
+        speed_term = -0.1 * (forward_vel - 2.5) ** 2
         h = max(0.0, height - 1.1)
-        if forward_vel > 0:
-            jump_height_bonus = 4.0 * h**2
-        else:
-            jump_height_bonus = 2 * h**2
-
-
-
-        # 3) Survival
+        jump_height_bonus = 4.0 * h ** 2 if forward_vel > 0 else 2 * h ** 2
         alive_bonus = 2.0
-
-        # 4) Tilt penalty (quadratic beyond 0.5 rad)
-        tilt_penalty = 2.0 * max(0.0, abs(angle) - 0.5)**2
-
-        # 5) Control cost (energy)
-        control_cost = 5e-4 * np.sum(a**2)
-
-        # 6) Jump‐height bonus (quadratic above 1.1 m)
-        #h = max(0.0, height - 1.1) ##CHANGED IN EPISODE 18000 MOVED TO IF ABOVE
-        #jump_height_bonus = 2 * h**2
-
-        # 7) Flight bonus (actually in the air)
-
-        # 8) Dive penalty (forward dive when tilted)
+        tilt_penalty = 2.0 * max(0.0, abs(angle) - 0.5) ** 2
+        control_cost = 5e-4 * np.sum(a ** 2)
         forward_vel_penalty = 1e-2 * forward_vel * abs(angle)
 
-        # Combine
         reward = (
-            forward_reward *0.9 # 0.5 factor to reduce reward magnitudEe
-           +speed_term
+            forward_reward * 0.9
+            + speed_term
             - backward_penalty
-          + alive_bonus
-          - tilt_penalty
-          - control_cost
-          + jump_height_bonus
-
-          - forward_vel_penalty
+            + alive_bonus
+            - tilt_penalty
+            - control_cost
+            + jump_height_bonus
+            - forward_vel_penalty
         )
         return obs, reward, done, {}
 
@@ -155,9 +124,9 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
         qvel = self.init_qvel + self.np_random.uniform(low=-.005, high=.005, size=self.model.nv)
         self.set_state(qpos, qvel)
 
-        if self.domain in ['udr']:  # Apply UDR
+        if self.domain == 'udr':
             self.set_parameters(self.sample_parameters())
-        if self.domain in ['cdr']:
+        if self.domain == 'cdr':
             level = min(1.0, self.elapsed / self.total_timesteps)
             self.set_parameters(self.sample_parameters(level))
         return self._get_obs()
@@ -185,7 +154,6 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
         """Return full MuJoCo state object."""
         return self.sim.get_state()
 
-    # DROID methods (optional)
     def random_search_optimization(self, real_actions, real_rewards, n_trials=100):
         """Optimize dynamics using random search."""
         best_params = None
@@ -239,9 +207,6 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
         return actions, rewards
 
 
-"""
-    Register Gym environments for different domains
-"""
 gym.envs.register(
     id="CustomHopper-v0",
     entry_point="%s:CustomHopper" % __name__,
@@ -256,12 +221,11 @@ gym.envs.register(
 )
 
 gym.envs.register(
-    id="CustomHopper-udr-v0",  # UDR
+    id="CustomHopper-udr-v0",
     entry_point="%s:CustomHopper" % __name__,
     max_episode_steps=5000,
     kwargs={"domain": "udr"}
 )
-
 
 gym.envs.register(
     id="CustomHopper-target-v0",
@@ -279,7 +243,7 @@ class EntropyScheduler(BaseCallback):
     def __init__(self, start_coef, end_coef, total_timesteps, verbose=0):
         super().__init__(verbose)
         self.start = start_coef
-        self.end   = end_coef
+        self.end = end_coef
         self.total = total_timesteps
 
     def _on_step(self) -> bool:

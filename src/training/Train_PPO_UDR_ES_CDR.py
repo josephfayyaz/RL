@@ -53,7 +53,7 @@ print(f'training on {torch.cuda.get_device_name(torch.cuda.current_device()) }' 
 
 HP_PATH = "../../models/PPO/best_hyperparameters.json"
 ENV_ID = f'{args.Domain}-v0'
-EVAL_ENV = 'CustomHopper-target-v0'  # Change to your specific environment
+EVAL_ENV = 'CustomHopper-source-v0'  # Change to your specific environment
 SAVE_PATH = '../../models/PPO/'
 LOG_PATH     = '../../Logs/PPO_episode_rewards/'
 CHECKPOINT_PATH = '../../models/PPO/checkpoints/'
