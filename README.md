@@ -7,17 +7,14 @@ his repository presents a comprehensive study on **reinforcement learning (RL)**
 - Robustness Techniques: Domain Randomization (UDR), Curriculum Learning (CDR), Entropy Scheduling (ES)
 
 
----
-
 ## 🎥 Hopper Locomotion Policy Demo
 
 <div align="center">
-  <img src="render/plots/hopper_animation.gif" alt="Hopper Demo" width="700"/>
+  <img src="render/plots/hopper_demo.gif" alt="Custom Hopper Demo" width="700"/>
   <br/>
-  <strong>Hopper locomotion policy learned via PPO + CDR + ES</strong>
+  <strong>Custom Hopper policy trained with PPO + CDR + ES</strong>
 </div>
 
----
 ---
 
 ## 📁 Repository Structure
