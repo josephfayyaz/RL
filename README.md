@@ -12,7 +12,7 @@ his repository presents a comprehensive study on **reinforcement learning (RL)**
 <div align="center">
   <a href="https://youtu.be/TYBzPKied9g" target="_blank">
     <img src="https://img.youtube.com/vi/TYBzPKied9g/0.jpg" 
-         alt="Watch the Hopper PPO + CDR + ES demo on YouTube" width="700"/>
+         alt="Watch the Hopper PPO + CDR + ES demo on YouTube" width="500"/>
   </a>
   <br/>
   <strong>Click to watch the full 15-second demo</strong>
