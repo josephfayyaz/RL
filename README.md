@@ -38,7 +38,7 @@ his repository presents a comprehensive study on **reinforcement learning (RL)**
 │   ├── actor_critic/                 #  ⇢ A2C/AC experiments
 │   └── baseline/                     #  ⇢ REINFORCE baseline runs
 │
-├── models/                           # Saved checkpoints
+├── models/                          
 │   ├── PPO/
 │   ├── actor_critic/
 │   └── reinforce_baseline/
