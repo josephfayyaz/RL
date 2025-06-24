@@ -24,34 +24,34 @@ his repository presents a comprehensive study on **reinforcement learning (RL)**
 
 ```bash
 .
-├── src/                                  # Core codebase
-│   ├── agents/                           # (Optional) agent definitions
-│   ├── env/                              # Custom MuJoCo Hopper environment
-│   ├── evaluation/                       # Evaluation utilities/scripts
-│   └── training/                         # Training scripts for all agents
+├── src/                              # Core code (Python package)
+│   ├── agents/                       # RL algorithm implementations
+│   ├── env/                          # Custom MuJoCo-Hopper wrappers
+│   ├── evaluation/                   # Metrics, plotting, helper scripts
+│   └── training/                     # Training entry-points & configs
 │
-│                 
+├── Logs/                             # Raw tensorboard/CSV logs
+│   ├── Learning_Curve/               #  ⇢ learning-curve CSVs
+│   ├── PPO_episode_rewards/          #  ⇢ per-episode returns
+│   ├── PPO_robustness/               #  ⇢ domain-randomisation runs
+│   ├── PPO_runtime_tmp/              #  ⇢ scratch & tmp logs
+│   ├── actor_critic/                 #  ⇢ A2C/AC experiments
+│   └── baseline/                     #  ⇢ REINFORCE baseline runs
 │
-├── Logs/                                 # Training logs, episode returns, sweep outputs
-│   ├── actor_critic/
-│   ├── baseline/
-│   ├── Learning_Curve/
-│   ├── PPO_callback/
-│   ├── PPO_episode_rewards/
-│   ├── PPO_robustness/
-│   ├── PPO_runtime_tmp/
-│   └── PPO_sweep/
-│
-├── models/                               # Saved model checkpoints
-│   ├── actor_critic/
+├── models/                           # Saved checkpoints
 │   ├── PPO/
+│   ├── actor_critic/
 │   └── reinforce_baseline/
 │
-├── render/                               # Visual results (e.g., gif, mp4)
+├── render/                           # Visual outputs (GIF/MP4/PNG)
 │   └── plots/
 │
-├── requirements.txt
-└── README.md
+├── requirements.txt                  # Python dependencies
+├── README.md                         # You are here 👋
+├── __init__.py                       # Makes repo import-able (`import rl_master`)
+├── .idea/                            # IDE settings  (⇢ add to .gitignore)
+└── __pycache__/                      # Byte-code cache (auto-generated)
+
 
 ```
 ---
