@@ -7,13 +7,17 @@ his repository presents a comprehensive study on **reinforcement learning (RL)**
 - Robustness Techniques: Domain Randomization (UDR), Curriculum Learning (CDR), Entropy Scheduling (ES)
 
 
-To get a better understanding of the Gym Hopper environment, click on the video below:
+---
 
-[//]: # ([![Gym Hopper Video]&#40;https://img.youtube.com/vi/jtXiTP96wow/0.jpg&#41;]&#40;https://youtu.be/jtXiTP96wow?si=aE64b0SOUBKXv4J7&#41;)
+## 🎥 Hopper Locomotion Policy Demo
 
-[![Watch the training demo](render/plots/hopper_animation.gif)](https://youtu.be/jtXiTP96wow?si=aE64b0SOUBKXv4J7&#41)
+<div align="center">
+  <img src="render/plots/hopper_animation.gif" alt="Hopper Demo" width="700"/>
+  <br/>
+  <strong>Hopper locomotion policy learned via PPO + CDR + ES</strong>
+</div>
 
-
+---
 ---
 
 ## 📁 Repository Structure
