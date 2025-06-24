@@ -24,8 +24,7 @@ To get a better understanding of the Gym Hopper environment, click on the video 
 │   ├── evaluation/                       # Evaluation utilities/scripts
 │   └── training/                         # Training scripts for all agents
 │
-├── evaluation/
-│   └── plot_csv_scripts/                 # Scripts to visualize learning curves and metrics
+│                    # Scripts to visualize learning curves and metrics
 │
 ├── Logs/                                 # Training logs, episode returns, sweep outputs
 │   ├── actor_critic/
