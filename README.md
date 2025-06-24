@@ -10,7 +10,7 @@ his repository presents a comprehensive study on **reinforcement learning (RL)**
 ## 🎥 Hopper Locomotion Policy Demo
 
 <div align="center">
-  <img src="render/plots/hopper_demo.gif" alt="Custom Hopper Demo" width="700"/>
+  <img src="render/plots/hopper_demo.gif" alt="Custom Hopper Demo" width="400"/>
   <br/>
   <strong>Custom Hopper policy trained with PPO + CDR + ES</strong>
 </div>
