@@ -34,7 +34,7 @@ def parse_args():
     parser.add_argument('--device', default='cuda', type=str, help='network device [cpu, cuda]')
     parser.add_argument('--algorithm' , default='PPO' ,type=str, choices=['PPO'], help='Algorithm to use for training')
     parser.add_argument("--Domain",default="udr",choices=["source","cdr","udr"],type=str,help="Which mass‐randomization regime to use")
-    parser.add_argument('--Entropy_Scheduling', default=True, type=bool, choices=[True,False], help='toggle to use Entropy Scheduling')
+    parser.add_argument('--Entropy_Scheduling', default=False, type=bool, choices=[True,False], help='toggle to use Entropy Scheduling')
     parser.add_argument('--seed', default=[0,14,42], type=int,nargs="+", help='Random seed for reproducibility')
     parser.add_argument('--n_envs', default=8, type=int, help='Number of parallel environments for training')
 
@@ -54,8 +54,8 @@ print(f'training on {torch.cuda.get_device_name(torch.cuda.current_device()) }' 
 HP_PATH = "../../models/PPO/best_hyperparameters.json"
 ENV_ID = f'{args.Domain}-v0'
 EVAL_ENV = 'CustomHopper-source-v0'  # Change to your specific environment
-SAVE_PATH = '../../models/PPO/'
-LOG_PATH     = '../../Logs/PPO_episode_rewards/'
+SAVE_PATH = '../../models/PPO/task/'
+LOG_PATH     = '../../Logs/PPO_episode_rewards/src_src/'
 CHECKPOINT_PATH = '../../models/PPO/checkpoints/'
 # os.makedirs("logs/csv", exist_ok=True)
 
@@ -267,7 +267,7 @@ def main():
     # regenerate timestamp or include seed
 
         envname=args.Domain
-        evalenvname="target"
+        evalenvname="source"
 
         csv_filename = os.path.join(LOG_PATH, f"{args.algorithm}_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{run_seed}_{Total_timesteps}({envname},{evalenvname}).csv")
 
