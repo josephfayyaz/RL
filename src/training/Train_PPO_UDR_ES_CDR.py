@@ -33,7 +33,7 @@ def parse_args():
     parser.add_argument('--print-every', default=100, type=int, help='Print info every <> episodes')
     parser.add_argument('--device', default='cuda', type=str, help='network device [cpu, cuda]')
     parser.add_argument('--algorithm' , default='PPO' ,type=str, choices=['PPO'], help='Algorithm to use for training')
-    parser.add_argument("--Domain",default="udr",choices=["source","cdr","udr"],type=str,help="Which mass‐randomization regime to use")
+    parser.add_argument("--Domain",default="source",choices=["source","cdr","udr"],type=str,help="Which mass‐randomization regime to use")
     parser.add_argument('--Entropy_Scheduling', default=False, type=bool, choices=[True,False], help='toggle to use Entropy Scheduling')
     parser.add_argument('--seed', default=[0,14,42], type=int,nargs="+", help='Random seed for reproducibility')
     parser.add_argument('--n_envs', default=8, type=int, help='Number of parallel environments for training')
