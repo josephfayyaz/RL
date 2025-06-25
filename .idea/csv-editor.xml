@@ -31,6 +31,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/Logs/PPO_eval/PPO_Vanilla_source_target_seed_0_eval_50_episodes.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/Logs/PPO_eval/PPO_source_ES_False_seed_0_eval.csv">
           <value>
             <Attribute>
@@ -46,6 +53,13 @@
           </value>
         </entry>
         <entry key="/Logs/PPO_eval/PPO_target_ES_False_seed_0_eval.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/Logs/PPO_eval/PPO_vanilla_source_target_seed_0_eval_50_episodes.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
