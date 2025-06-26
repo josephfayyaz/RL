@@ -3,6 +3,8 @@ import os
 import ctypes
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..','..')))
+
 # mujoco_path = "C:/.mujoco/mujoco210/bin"  # manually append library for running on windoes
 # os.environ["PATH"] += ";" + mujoco_path
 # ctypes.CDLL(os.path.join(mujoco_path, "mujoco210.dll"))
@@ -14,14 +16,14 @@ from stable_baselines3 import PPO
 import argparse
 # RL project
 # Import your custom environment if necessary
-# from env.custom_hopper import *
+from env.custom_hopper import *
 # from env.custom_hopper_saghal import *
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     # parser.add_argument('--model', default=None, type=str, help='Model path')
-    parser.add_argument('--model', default=r'/home/joseph/python-proj/udr_ES/models/PPO_runtime_tmp/PPO_cdr_ES_False_seed_0_CustomHopper_cdr_v0_target_5000000.zip',
+    parser.add_argument('--model', default=r'/home/joseph/python-proj/udr_ES/models/PPO/vanila/PPO_source_ES_False_seed_0_CustomHopper_source_v0_1000000.zip',
                         type=str, help='Model path')
 
     parser.add_argument('--device', default='cuda', type=str, help='network device [cpu, cuda]')

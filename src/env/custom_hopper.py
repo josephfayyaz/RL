@@ -210,33 +210,33 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
 gym.envs.register(
     id="CustomHopper-v0",
     entry_point="%s:CustomHopper" % __name__,
-    max_episode_steps=5000,
+    max_episode_steps=500,
 )
 
 gym.envs.register(
     id="CustomHopper-source-v0",
     entry_point="%s:CustomHopper" % __name__,
-    max_episode_steps=5000,
+    max_episode_steps=500,
     kwargs={"domain": "source"}
 )
 
 gym.envs.register(
     id="CustomHopper-udr-v0",
     entry_point="%s:CustomHopper" % __name__,
-    max_episode_steps=5000,
+    max_episode_steps=500,
     kwargs={"domain": "udr"}
 )
 
 gym.envs.register(
     id="CustomHopper-target-v0",
     entry_point="%s:CustomHopper" % __name__,
-    max_episode_steps=5000,
+    max_episode_steps=500,
     kwargs={"domain": "target"}
 )
 gym.envs.register(
     id="CustomHopper-cdr-v0",
     entry_point="%s:CustomHopper" % __name__,
-    max_episode_steps=5000,
+    max_episode_steps=500,
     kwargs={"domain": "cdr"}
 )
 class EntropyScheduler(BaseCallback):

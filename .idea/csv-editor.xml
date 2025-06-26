@@ -3,21 +3,14 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="/Logs/Learning_Curve/learning_curve_PPO_Domain _target_ES_False_seed_0_xfer_1M.csv">
+        <entry key="/Logs/PPO_eval/Completed_PPO_Vanilla_source_target_seed_0_50_episodes.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/Logs/Learning_Curve/learning_curve_PPO_Domain _target_ES_False_seed_14_1M.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/Logs/Learning_Curve/learning_curve_PPO_Domain _target_ES_False_seed_14_xfer_1M.csv">
+        <entry key="/Logs/PPO_eval/PPO_UDR_source_source_seed_0_eval_50_episodes.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -31,35 +24,28 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/Logs/PPO_eval/PPO_Vanilla_source_target_seed_0_eval_50_episodes.csv">
+        <entry key="/Logs/PPO_eval/PPO_Vanilla_source_source_seed_0_50_episodes.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/Logs/PPO_eval/PPO_source_ES_False_seed_0_eval.csv">
+        <entry key="/Logs/PPO_eval/PPO_Vanilla_source_target_completed.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/Logs/PPO_eval/PPO_source_ES_False_seed_0_eval_full.csv">
+        <entry key="/Logs/PPO_eval/PPO_Vanilla_source_target_seed_0_50_episodes.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/Logs/PPO_eval/PPO_target_ES_False_seed_0_eval.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/Logs/PPO_eval/PPO_vanilla_source_target_seed_0_eval_50_episodes.csv">
+        <entry key="/Logs/PPO_eval/PPO_Vanilla_target_target_seed_0_eval_50_episodes.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
