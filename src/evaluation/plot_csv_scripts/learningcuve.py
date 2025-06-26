@@ -50,8 +50,10 @@ def plot(curves, labels, title, output, y_limit=None):
         plt.plot(x, y,
                  color=palette[i % len(palette)],
                  linestyle=dash_styles[i % len(dash_styles)],
-                 linewidth=2.2, label=label)
+                 linewidth=2.2,
+                 label=label)
 
+    plt.suptitle("Learning Curve", fontsize=16, weight='bold', y=1)
     plt.title(title, fontsize=14, weight='bold')
     plt.xlabel("Timesteps", fontsize=12)
     plt.ylabel("Mean Reward", fontsize=12)
@@ -66,13 +68,21 @@ def plot(curves, labels, title, output, y_limit=None):
     plt.close()
 
 def main(args):
-    # Map of label → list of matching files
+    # Map of original label → variant name used in filename
+    label_to_variant = {
+        label: label.replace("PPO_", "") if label != "PPO" else "PPO"
+        for label in args.labels
+    }
+
     label_to_files = {}
-    for label in args.labels:
+    for label, variant in label_to_variant.items():
         files = []
         for seed in args.seeds:
-            pattern = f"{args.dir}/learning_curve_PPO_{label}_seed_{seed}_5M.csv"
-            matched = glob(pattern)
+            if variant == "PPO":
+                pattern = f"{args.dir}/**/learning_curve_PPO_seed_{seed}_5M*.csv"
+            else:
+                pattern = f"{args.dir}/**/learning_curve_PPO_{variant}_seed_{seed}_5M*.csv"
+            matched = glob(pattern, recursive=True)
             if matched:
                 files.extend(matched)
         if not files:
@@ -80,7 +90,7 @@ def main(args):
         else:
             label_to_files[label] = files
 
-    # Average and smooth curves
+    # Average and smooth
     curves = []
     valid_labels = []
     for label, files in label_to_files.items():
@@ -93,13 +103,28 @@ def main(args):
         print("🚫 No valid data to plot.")
         return
 
+    auc_records = []
+    for (x, y), label in zip(curves, valid_labels):
+        auc = np.trapz(y, x)
+        auc_records.append({"Algorithm": label, "AUC": auc})
+
+    auc_df = pd.DataFrame(auc_records).sort_values(by="AUC", ascending=False)
+    print("\n📊 Area Under Learning Curve (AULC):")
+    print(auc_df.to_string(index=False))
+
+    output_dir = os.path.join("Logs", "PPO_robustness")
+    os.makedirs(output_dir, exist_ok=True)
+    auc_csv_path = os.path.join(output_dir, "auc_scores.csv")
+    auc_df.to_csv(auc_csv_path, index=False)
+    print(f"✅ AUC scores saved to: {auc_csv_path}")
+
     plot(curves, valid_labels, args.title, args.output, args.y_limit)
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--dir", required=True, help="Directory containing CSVs")
     p.add_argument("--labels", nargs='+', required=True,
-                   help="Config labels, e.g., source_ES_True")
+                   help="Legend labels: PPO_CDR_ES PPO_CDR PPO_ES PPO etc.")
     p.add_argument("--seeds", nargs='+', required=True,
                    help="Seed values to average over")
     p.add_argument("--title", default="Smoothed PPO Comparison")
