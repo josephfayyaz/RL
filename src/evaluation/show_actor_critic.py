@@ -2,11 +2,15 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..','..')))
 
 import torch
+import gym
+import torch
+from env import *
 
-from src.env import *
-from src.agents.agent_ac import Agent_ac as Agent, Policy_ac as Policy
+from env.custom_hopper import *
+from agents.agent_ac import Agent_ac as Agent, Policy_ac as Policy
 
 
 # def parse_args():
@@ -21,7 +25,7 @@ from src.agents.agent_ac import Agent_ac as Agent, Policy_ac as Policy
 #
 # args = parse_args()
 
-model= "/home/joseph/python-proj/udr_ES/models/actor_critic/model_actor_critic_3.mdl"
+model= "/home/joseph/python-proj/udr_ES/models/actor_critic/model_actor_critic_6.mdl"
 device= "cuda"
 render= "True"
 episodes= 100

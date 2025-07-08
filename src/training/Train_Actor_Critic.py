@@ -9,8 +9,9 @@ import gym
 
 # Add parent directory to system path to allow relative imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.agents.agent_ac import Agent_ac, Policy_ac  # Custom Actor-Critic agent and policy
-from src.env.custom_hopper import *  # Custom Hopper environment (must be registered correctly)
+
+from agents.agent_ac import Agent_ac, Policy_ac  # Custom Actor-Critic agent and policy
+from env.custom_hopper import *  # Custom Hopper environment (must be registered correctly)
 
 
 # -------------------- Device Setup -------------------- #
@@ -24,9 +25,9 @@ print(f'training on {torch.cuda.get_device_name(torch.cuda.current_device()) }' 
 # -------------------- Configuration -------------------- #
 SAVE_INTERVAL = 10000  # Save model every 10k timesteps
 MODEL_SAVE_DIR = "../../models/actor_critic/"
-LOG_CSV_PATH = "../../Logs/actor_critic/training_actor_critic_upgraded_3.csv"
-TEST_LOG_PATH = "../../Logs/actor_critic/test_log_3.csv"
-FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_actor_critic_3.mdl")
+LOG_CSV_PATH = "../../Logs/actor_critic/training_target_source_actor_critic_upgraded_7.csv"
+TEST_LOG_PATH = "../../Logs/actor_critic/test_log_7.csv"
+FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_actor_critic_target_7.mdl")
 
 
 # -------------------- Evaluation Function -------------------- #
@@ -63,7 +64,7 @@ def main():
     config = {
         "policy_type": "MlpPolicy",
         "total_timesteps": 1000000,
-        "env_id_source": "CustomHopper-source-v0",
+        "env_id_source": "CustomHopper-target-v0",
         "env_id_target": "CustomHopper-source-v0",
         "test_episodes": 50,
         "success_threshold": 1000
@@ -84,6 +85,7 @@ def main():
     # Track total rewards for smoothing and statistics
     total_rewards = []
     train_reward = 0
+    episode_number = 1
     state = env.reset()
     total_timesteps = 0
     reached_1000 = False
@@ -93,7 +95,7 @@ def main():
     # -------------------- Logging Setup -------------------- #
     with open(LOG_CSV_PATH, "w", newline="") as training_csv:
         train_writer = csv.writer(training_csv)
-        train_writer.writerow(["timestep", "mean_reward", "std_reward", "steps_to_1000_return", "actor_loss", "critic_loss", "entropy"])
+        train_writer.writerow(["episode", "timestep", "mean_reward", "std_reward", "steps_to_1000_return", "actor_loss", "critic_loss", "entropy"])
 
         # -------------------- Training Loop -------------------- #
         while total_timesteps < config["total_timesteps"]:
@@ -126,6 +128,7 @@ def main():
                 std_reward = np.std(total_rewards)
 
                 train_writer.writerow([
+                    episode_number,
                     total_timesteps,
                     mean_reward,
                     std_reward,
@@ -139,13 +142,14 @@ def main():
 
                 # -------------------- Model Checkpointing -------------------- #
                 if total_timesteps % SAVE_INTERVAL == 0:
-                    ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_actor_critic_step_{total_timesteps}.mdl")
+                    ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_actor_critic_step_target_{total_timesteps}.mdl")
                     torch.save(agent.policy.state_dict(), ckpt_path)
                     print(f"Model checkpoint saved to: {ckpt_path}")
 
                 # Reset environment and reward
                 state = env.reset()
                 train_reward = 0
+                episode_number += 1
 
     # -------------------- End of Training -------------------- #
     end = timer()
