@@ -8,10 +8,8 @@ import gym
 
 # Include parent directory in path for custom imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from env.custom_hopper import *
-from agents.agent_baseline import Agent, Policy
+from src.env.custom_hopper import *  # Custom MuJoCo Hopper environments
+from src.agents.agent_baseline import Agent, Policy  # REINFORCE agent without baseline
 
 
 # -------------------- Device Setup -------------------- #
@@ -19,10 +17,10 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # -------------------- Config -------------------- #
 SAVE_INTERVAL = 10000
-MODEL_SAVE_DIR = "models/model_reinforce_baseline"
-TRAIN_LOG_PATH = "../../Logs/baseline/training_baseline.csv"
-TEST_LOG_PATH = "../../Logs/baseline/test_log_baseline.csv"
-FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_reinforce_baseline_final.mdl")
+MODEL_SAVE_DIR = "../../models/reinforce_baseline"
+TRAIN_LOG_PATH = "../../Logs/baseline/source_training_baseline_1M.csv"
+TEST_LOG_PATH = "../../Logs/baseline/source_test_log_baseline_1M.csv"
+FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "source_model_reinforce_baseline_final_1M.mdl")
 
 
 # -------------------- Evaluation Function -------------------- #
@@ -131,7 +129,7 @@ def main():
 
                 # Save checkpoint
                 if global_timesteps % SAVE_INTERVAL == 0:
-                    ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_reinforce_baseline_step_{global_timesteps}.mdl")
+                    ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_source_reinforce_baseline_step_{global_timesteps}_1M.mdl")
                     torch.save(agent.policy.state_dict(), ckpt_path)
                     print(f"📦 Checkpoint saved to {ckpt_path}")
 

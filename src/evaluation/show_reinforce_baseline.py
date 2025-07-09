@@ -1,10 +1,10 @@
 """Test an RL agent on the OpenAI Gym Hopper environment"""
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 import torch
-from src.env import *
+from src.env.custom_hopper import *  # Custom MuJoCo Hopper environments
 from src.agents.agent_baseline import Agent, Policy
 
 
@@ -20,7 +20,7 @@ from src.agents.agent_baseline import Agent, Policy
 #
 # args = parse_args()
 
-model= "/home/joseph/python-proj/1/models/reinforce_baseline/model_reinforce_baseline_1_100K.mdl"
+model= "/home/parastoo/Desktop/new_yousef/RL/src/training/models/model_reinforce_baseline/model_reinforce_baseline_final.mdl"
 device= "cuda"
 render= "True"
 episodes= 100
