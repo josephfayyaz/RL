@@ -11,7 +11,7 @@ import random
 # Include parent directory in path for custom imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from src.env.custom_hopper import *  # Custom MuJoCo Hopper environments
-from src.agents.agent_baseline import Agent, Policy  # REINFORCE agent without baseline
+from src.agents.agent_baseline import Agent, Policy  # REINFORCE agent with baseline
 
 
 def parse_args():
