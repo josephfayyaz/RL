@@ -11,17 +11,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 from src.env.custom_hopper import *  # Custom MuJoCo Hopper environments
 from src.agents.agent_baseline import Agent, Policy  # REINFORCE agent without baseline
 
-
 # -------------------- Device Setup -------------------- #
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # -------------------- Config -------------------- #
-SAVE_INTERVAL = 10000
+SAVE_INTERVAL = 200000
 MODEL_SAVE_DIR = "../../models/reinforce_baseline"
-TRAIN_LOG_PATH = "../../Logs/baseline/source_training_baseline_1M.csv"
-TEST_LOG_PATH = "../../Logs/baseline/source_test_log_baseline_1M.csv"
-FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "source_model_reinforce_baseline_final_1M.mdl")
-
+TRAIN_LOG_PATH = "../../Logs/baseline/source_training_baseline_5M.csv"
+FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_reinforce_baseline_final_source_5M.mdl")
 
 # -------------------- Evaluation Function -------------------- #
 def evaluate_agent_on_env(env, agent, episodes, threshold):
@@ -45,16 +42,13 @@ def evaluate_agent_on_env(env, agent, episodes, threshold):
 
 # -------------------- Main Training Loop -------------------- #
 def main():
-    print("=== Starting REINFORCE training ===", flush=True)
-
     config = {
         "policy_type": "MlpPolicy",
-        "total_timesteps": 1000000,
+        "total_timesteps": 5000000,
         "env_id_source": "CustomHopper-source-v0",
         "env_id_target": "CustomHopper-target-v0",
         "test_episodes": 50,
-        "success_threshold": 1000,
-        "seed": 42
+        "success_threshold": 1000
     }
 
     # Setup
@@ -70,10 +64,6 @@ def main():
     policy = Policy(observation_space_dim, action_space_dim)
     agent = Agent(policy, device=device)
 
-    torch.manual_seed(config["seed"])
-    np.random.seed(config["seed"])
-
-    # Logging
     total_rewards = []
     train_reward = 0
     state = env.reset()
@@ -81,6 +71,7 @@ def main():
     global_timesteps = 0
     reached_1000 = False
     steps_to_1000 = None
+    next_save_step = SAVE_INTERVAL  # ← NEW
     start = timer()
 
     with open(TRAIN_LOG_PATH, "w", newline="") as training_csv:
@@ -95,6 +86,13 @@ def main():
             agent.store_outcome(prev_state, state, action_log_prob, reward, done)
             train_reward += reward
             global_timesteps += 1
+
+            # Checkpoint at fixed intervals (even during episode)
+            if global_timesteps >= next_save_step:
+                ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_reinforce_vanilla_source_step_{global_timesteps}.mdl")
+                torch.save(agent.policy.state_dict(), ckpt_path)
+                print(f"📦 Checkpoint saved to {ckpt_path}")
+                next_save_step += SAVE_INTERVAL
 
             if done:
                 # Estimate entropy from saved log_probs
@@ -127,12 +125,6 @@ def main():
 
                 print(f"[{global_timesteps}] Ep:{episode_number} R:{train_reward:.1f} | Mean:{mean_r:.1f}, Entropy:{entropy:.3f}, Loss:{policy_loss:.3f}")
 
-                # Save checkpoint
-                if global_timesteps % SAVE_INTERVAL == 0:
-                    ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_source_reinforce_baseline_step_{global_timesteps}_1M.mdl")
-                    torch.save(agent.policy.state_dict(), ckpt_path)
-                    print(f"📦 Checkpoint saved to {ckpt_path}")
-
                 state = env.reset()
                 train_reward = 0
                 episode_number += 1
@@ -146,19 +138,9 @@ def main():
     print(f"⏱ Training completed in {end - start:.2f} seconds")
 
     # Evaluate on source and target
-    print("🔍 Evaluating...")
     mean_s, std_s, p5_s, sr_s, _ = evaluate_agent_on_env(env, agent, config["test_episodes"], config["success_threshold"])
-    mean_t, std_t, p5_t, sr_t, _ = evaluate_agent_on_env(env_target, agent, config["test_episodes"], config["success_threshold"])
 
     print(f"📊 Source → Mean: {mean_s:.1f}, STD: {std_s:.1f}, P5: {p5_s:.1f}, Success: {sr_s:.2f}")
-    print(f"📊 Target → Mean: {mean_t:.1f}, STD: {std_t:.1f}, P5: {p5_t:.1f}, Success: {sr_t:.2f}")
-
-    with open(TEST_LOG_PATH, "w", newline="") as test_log:
-        test_writer = csv.writer(test_log)
-        test_writer.writerow(["env", "mean_reward", "std_reward", "5th_percentile", "success_rate"])
-        test_writer.writerow(["source", mean_s, std_s, p5_s, sr_s])
-        test_writer.writerow(["target", mean_t, std_t, p5_t, sr_t])
-
 
 # -------------------- Run -------------------- #
 if __name__ == '__main__':
