@@ -13,7 +13,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 from src.env.custom_hopper import *  # Custom MuJoCo Hopper environments
 from src.agents.agent_reinforce_normal import Agent, Policy  # REINFORCE agent without baseline
 
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str, default='/home/parastoo/Desktop/new_yousef/RL/models/reinforce_vanilla/model_reinforce_vanilla_source_1.mdl',
