@@ -4,23 +4,25 @@ import csv
 import torch
 import numpy as np
 from timeit import default_timer as timer
-import wandb
 import gym
 
 # Include parent directory in path for custom imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.env.custom_hopper import *  # Custom MuJoCo Hopper environments
-from src.agents.agent_reinforce_normal import Agent, Policy  # REINFORCE agent without baseline
+from env.custom_hopper import *
+from agents.agent_reinforce_normal import Agent, Policy
 
 # -------------------- Device Setup -------------------- #
-device = "cuda"
+device = "cuda" #if torch.cuda.is_available() else "cpu"
+
+# -------------------- Configuration -------------------- #
+SAVE_INTERVAL = 1000000
+MODEL_SAVE_DIR = "models/reinforce_vanilla/"
+TRAIN_LOG_PATH = "../../Logs/vanilla/training_Reinforce_vanilla_target_2.csv"
+TEST_LOG_PATH = "../../Logs/vanilla/test_log_vanilla_2.csv"
+FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_reinforce_vanilla_target_2.mdl")
 
 # -------------------- Evaluation Function -------------------- #
 def evaluate_agent_on_env(env, agent, episodes, threshold):
-    """
-    Evaluate the trained agent over a number of episodes.
-    Returns statistics including mean, std, 5th percentile, and success rate.
-    """
     returns = []
     for _ in range(episodes):
         state = env.reset()
@@ -38,148 +40,110 @@ def evaluate_agent_on_env(env, agent, episodes, threshold):
     success_rate = sum(r >= threshold for r in returns) / len(returns)
     return mean_r, std_r, p5_r, success_rate, returns
 
-
-# -------------------- Main Training Loop -------------------- #
+# -------------------- Training Loop -------------------- #
 def main():
     config = {
         "policy_type": "MlpPolicy",
-        "total_timesteps": 100000,
-        "env_id_source": "CustomHopper-udr-v0",  # Uniform domain randomized version
-        "env_id_target": "CustomHopper-target-v0",
+        "total_timesteps": 1000000,
+        "env_id_source": "CustomHopper-target-v0",
+        "env_id_target": "CustomHopper-source-v0",
         "test_episodes": 50,
-        "success_threshold": 1000
+        "success_threshold": 1000,
+        "seed": 42
     }
 
-    # Init Weights & Biases logging
-    run = wandb.init(
-        project="reinforce_baseline_100K_UDR_saghal_1",
-        config=config,
-        sync_tensorboard=True
-    )
-    wandb.run.name = "Reinforce_Baseline_Run"
-    wandb.run.save()
+    # Setup
+    os.makedirs("../../Logs/vanilla", exist_ok=True)
+    os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
 
-    # Create training and testing environments
     env = gym.make(config["env_id_source"])
     env_target = gym.make(config["env_id_target"])
 
-    # Get dimensions
-    observation_space_dim = env.observation_space.shape[-1]
-    action_space_dim = env.action_space.shape[-1]
+    obs_dim = env.observation_space.shape[-1]
+    act_dim = env.action_space.shape[-1]
 
-    # Initialize policy network and agent
-    policy = Policy(observation_space_dim, action_space_dim)
+    policy = Policy(obs_dim, act_dim)
     agent = Agent(policy, device=device)
 
     total_rewards = []
     train_reward = 0
     state = env.reset()
-    total_timesteps = 0
+    episode_number = 1
+    global_timesteps = 0
     reached_1000 = False
     steps_to_1000 = None
     start = timer()
 
-    # -------------------- CSV Logging Setup -------------------- #
-    training_csv = open("../../Logs/baseline/training_baseline_100K_UDR_log.csv", "w", newline="")
-    train_writer = csv.writer(training_csv)
-    train_writer.writerow(["timestep", "mean_reward", "std_reward", "steps_to_1000_return"])
+    with open(TRAIN_LOG_PATH, "w", newline="") as training_csv:
+        train_writer = csv.writer(training_csv)
+        train_writer.writerow(["episode", "timestep", "mean_reward", "std_reward", "steps_to_1000_return", "policy_loss", "entropy"])
 
-    # -------------------- Training Loop -------------------- #
-    for total_timesteps in range(config["total_timesteps"]):
-        action, action_probabilities = agent.get_action(state)
-        previous_state = state
-        state, reward, done, _ = env.step(action.detach().cpu().numpy())
+        while global_timesteps < config["total_timesteps"]:
+            action, log_prob = agent.get_action(state)
+            prev_state = state
+            state, reward, done, _ = env.step(action.detach().cpu().numpy())
 
-        # Store the transition (s, a, r, s′, done)
-        agent.store_outcome(previous_state, state, action_probabilities, reward, done)
+            agent.store_outcome(prev_state, state, log_prob, reward, done)
+            train_reward += reward
+            global_timesteps += 1
 
-        print('Training step:', total_timesteps)
-        train_reward += reward
-        total_timesteps += 1
+            if done:
+                entropies = [-lp.item() for lp in agent.action_log_probs]
+                entropy = np.mean(entropies)
+                policy_loss = agent.update_policy() or 0.0
 
-        if done:
-            # Policy update: REINFORCE algorithm (without baseline)
-            agent.update_policy()
+                total_rewards.append(train_reward)
 
-            total_rewards.append(train_reward)
+                if train_reward >= config["success_threshold"] and not reached_1000:
+                    reached_1000 = True
+                    steps_to_1000 = global_timesteps
+                    print(f"🎯 Return ≥ {config['success_threshold']} at timestep {global_timesteps}")
 
-            if train_reward >= config["success_threshold"] and not reached_1000:
-                reached_1000 = True
-                steps_to_1000 = total_timesteps
+                mean_r = np.mean(total_rewards)
+                std_r = np.std(total_rewards)
 
-            mean_reward = np.mean(total_rewards)
-            std_reward = np.std(total_rewards)
+                train_writer.writerow([
+                    episode_number,
+                    global_timesteps,
+                    mean_r,
+                    std_r,
+                    steps_to_1000 or "",
+                    policy_loss,
+                    entropy
+                ])
 
-            wandb.log({
-                "mean_reward": mean_reward,
-                "std_reward": std_reward,
-                "timestep": total_timesteps + 1
-            })
-            train_writer.writerow([total_timesteps + 1, mean_reward, std_reward, steps_to_1000 or ""])
+                print(f"[{global_timesteps}] Ep:{episode_number} R:{train_reward:.1f} | Mean:{mean_r:.1f}, Entropy:{entropy:.3f}, Loss:{policy_loss:.3f}")
 
-            # Reset for new episode
-            state = env.reset()
-            train_reward = 0
+                # Save checkpoint
+                if global_timesteps % SAVE_INTERVAL == 0:
+                    ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_reinforce_vanilla_step_{global_timesteps}.mdl")
+                    torch.save(agent.policy.state_dict(), ckpt_path)
+                    print(f"📦 Checkpoint saved to {ckpt_path}")
 
-    training_csv.close()
-    print("Training completed.")
+                state = env.reset()
+                train_reward = 0
+                episode_number += 1
+
+    # Save final model
+    torch.save(agent.policy.state_dict(), FINAL_MODEL_PATH)
+    print(f"✅ Final model saved to {FINAL_MODEL_PATH}")
+
     end = timer()
+    print(f"⏱ Training completed in {end - start:.2f} seconds")
 
-    # -------------------- Log Training Outcome -------------------- #
-    if steps_to_1000:
-        wandb.log({"steps_to_1000_return": steps_to_1000})
-        print(f"Reached return ≥ {config['success_threshold']} at timestep {steps_to_1000}")
-    else:
-        print(f"Return ≥ {config['success_threshold']} was never reached.")
+    # -------------------- Evaluation -------------------- #
+    mean_s, std_s, p5_s, sr_s, _ = evaluate_agent_on_env(env, agent, config["test_episodes"], config["success_threshold"])
+    mean_t, std_t, p5_t, sr_t, _ = evaluate_agent_on_env(env_target, agent, config["test_episodes"], config["success_threshold"])
 
-    # -------------------- Evaluation on Source Env -------------------- #
-    mean_r, std_r, p5_r, success_rate, _ = evaluate_agent_on_env(env, agent, config["test_episodes"], config["success_threshold"])
-    wandb.log({
-        "test_source_mean_reward": mean_r,
-        "test_source_std_reward": std_r,
-        "test_source_5th_percentile": p5_r,
-        "test_source_success_rate": success_rate
-    })
+    print(f"📊 Source → Mean: {mean_s:.1f}, STD: {std_s:.1f}, P5: {p5_s:.1f}, Success: {sr_s:.2f}")
+    print(f"📊 Target → Mean: {mean_t:.1f}, STD: {std_t:.1f}, P5: {p5_t:.1f}, Success: {sr_t:.2f}")
 
-    # -------------------- Evaluation on Target Env -------------------- #
-    mean_rt, std_rt, p5_rt, success_rate_t, _ = evaluate_agent_on_env(env_target, agent, config["test_episodes"], config["success_threshold"])
-    wandb.log({
-        "test_target_mean_reward": mean_rt,
-        "test_target_std_reward": std_rt,
-        "test_target_5th_percentile": p5_rt,
-        "test_target_success_rate": success_rate_t
-    })
-
-    # -------------------- Robustness Evaluation: AUC under Domain Randomization -------------------- #
-    levels = [f"CustomHopper-sudr-{i}-v0" for i in range(5)]
-    returns_per_level = []
-
-    for level_id in levels:
-        try:
-            test_env = gym.make(level_id)
-        except:
-            print(f"Skipping {level_id}, not registered.")
-            continue
-
-        mean_r_l, _, _, _, _ = evaluate_agent_on_env(test_env, agent, config["test_episodes"], config["success_threshold"])
-        returns_per_level.append(mean_r_l)
-
-    # Area under curve (AUC) represents performance consistency across randomized levels
-    auc = np.trapz(returns_per_level, dx=1)
-    wandb.log({"AUC_robustness_curve": auc})
-    print(f"AUC across levels: {auc:.2f}")
-
-    # -------------------- Save Results and Model -------------------- #
-    with open("Logs/baseline/test_log_baseline.csv", "w", newline="") as test_log:
+    with open(TEST_LOG_PATH, "w", newline="") as test_log:
         test_writer = csv.writer(test_log)
-        test_writer.writerow(["env_type", "mean_reward", "std_reward", "5th_percentile", "success_rate"])
-        test_writer.writerow(["source", mean_r, std_r, p5_r, success_rate])
-        test_writer.writerow(["target", mean_rt, std_rt, p5_rt, success_rate_t])
+        test_writer.writerow(["env", "mean_reward", "std_reward", "5th_percentile", "success_rate"])
+        test_writer.writerow(["source", mean_s, std_s, p5_s, sr_s])
+        test_writer.writerow(["target", mean_t, std_t, p5_t, sr_t])
 
-    torch.save(agent.policy.state_dict(), "models/model_reinforce_baseline/model_reinforce_baseline_2_100K.mdl")
-    print(f"Total training time: {end - start:.2f} seconds")
-
-    run.finish()
 
 # -------------------- Entry Point -------------------- #
 if __name__ == '__main__':
