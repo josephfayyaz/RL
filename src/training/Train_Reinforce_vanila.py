@@ -15,7 +15,7 @@ from src.agents.agent_reinforce_normal import Agent, Policy  # REINFORCE agent w
 device = "cuda" #if torch.cuda.is_available() else "cpu"
 
 # -------------------- Configuration -------------------- #
-SAVE_INTERVAL = 1000000
+SAVE_INTERVAL = 200000
 MODEL_SAVE_DIR = "../../models/reinforce_vanilla/"
 TRAIN_LOG_PATH = "../../Logs/vanilla/training_Reinforce_vanilla_target_5M.csv"
 FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_reinforce_vanilla_source_5M.mdl")
