@@ -15,7 +15,7 @@ from src.agents.agent_reinforce_normal import Agent, Policy  # REINFORCE agent w
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str, default='/home/parastoo/Desktop/new_yousef/RL/models/reinforce_vanilla/model_reinforce_vanilla_source_1.mdl',
+    parser.add_argument('--model_path', type=str, default='/home/parastoo/Desktop/new_yousef/RL/models/reinforce_vanilla/model_reinforce_vanilla_source_1M.mdl',
                         help='Path to the saved reinforce-vanilla model (.mdl)')
     parser.add_argument('--domain', type=str, default='target',
                         choices=['source', 'cdr', 'udr', 'target'], help='Environment domain to evaluate on')

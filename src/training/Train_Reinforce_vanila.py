@@ -7,19 +7,18 @@ from timeit import default_timer as timer
 import gym
 
 # Include parent directory in path for custom imports
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from env.custom_hopper import *
-from agents.agent_reinforce_normal import Agent, Policy
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from src.env.custom_hopper import *  # Custom MuJoCo Hopper environments
+from src.agents.agent_reinforce_normal import Agent, Policy  # REINFORCE agent without baseline
 
 # -------------------- Device Setup -------------------- #
 device = "cuda" #if torch.cuda.is_available() else "cpu"
 
 # -------------------- Configuration -------------------- #
-SAVE_INTERVAL = 1000000
-MODEL_SAVE_DIR = "models/reinforce_vanilla/"
-TRAIN_LOG_PATH = "../../Logs/vanilla/training_Reinforce_vanilla_target_2.csv"
-TEST_LOG_PATH = "../../Logs/vanilla/test_log_vanilla_2.csv"
-FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_reinforce_vanilla_target_2.mdl")
+SAVE_INTERVAL = 200000
+MODEL_SAVE_DIR = "../../models/reinforce_vanilla/"
+TRAIN_LOG_PATH = "../../Logs/vanilla/training_Reinforce_vanilla_target_5M.csv"
+FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_reinforce_vanilla_source_5M.mdl")
 
 # -------------------- Evaluation Function -------------------- #
 def evaluate_agent_on_env(env, agent, episodes, threshold):
@@ -44,12 +43,11 @@ def evaluate_agent_on_env(env, agent, episodes, threshold):
 def main():
     config = {
         "policy_type": "MlpPolicy",
-        "total_timesteps": 1000000,
-        "env_id_source": "CustomHopper-target-v0",
-        "env_id_target": "CustomHopper-source-v0",
+        "total_timesteps": 5000000,
+        "env_id_source": "CustomHopper-source-v0",
+        "env_id_target": "CustomHopper-target-v0",
         "test_episodes": 50,
-        "success_threshold": 1000,
-        "seed": 42
+        "success_threshold": 1000
     }
 
     # Setup
@@ -72,6 +70,7 @@ def main():
     global_timesteps = 0
     reached_1000 = False
     steps_to_1000 = None
+    next_save_step = SAVE_INTERVAL  # ← NEW
     start = timer()
 
     with open(TRAIN_LOG_PATH, "w", newline="") as training_csv:
@@ -86,6 +85,13 @@ def main():
             agent.store_outcome(prev_state, state, log_prob, reward, done)
             train_reward += reward
             global_timesteps += 1
+
+            # Checkpoint at fixed intervals (even during episode)
+            if global_timesteps >= next_save_step:
+                ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_reinforce_vanilla_step_{global_timesteps}.mdl")
+                torch.save(agent.policy.state_dict(), ckpt_path)
+                print(f"📦 Checkpoint saved to {ckpt_path}")
+                next_save_step += SAVE_INTERVAL
 
             if done:
                 entropies = [-lp.item() for lp in agent.action_log_probs]
@@ -114,12 +120,6 @@ def main():
 
                 print(f"[{global_timesteps}] Ep:{episode_number} R:{train_reward:.1f} | Mean:{mean_r:.1f}, Entropy:{entropy:.3f}, Loss:{policy_loss:.3f}")
 
-                # Save checkpoint
-                if global_timesteps % SAVE_INTERVAL == 0:
-                    ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_reinforce_vanilla_step_{global_timesteps}.mdl")
-                    torch.save(agent.policy.state_dict(), ckpt_path)
-                    print(f"📦 Checkpoint saved to {ckpt_path}")
-
                 state = env.reset()
                 train_reward = 0
                 episode_number += 1
@@ -133,17 +133,8 @@ def main():
 
     # -------------------- Evaluation -------------------- #
     mean_s, std_s, p5_s, sr_s, _ = evaluate_agent_on_env(env, agent, config["test_episodes"], config["success_threshold"])
-    mean_t, std_t, p5_t, sr_t, _ = evaluate_agent_on_env(env_target, agent, config["test_episodes"], config["success_threshold"])
 
     print(f"📊 Source → Mean: {mean_s:.1f}, STD: {std_s:.1f}, P5: {p5_s:.1f}, Success: {sr_s:.2f}")
-    print(f"📊 Target → Mean: {mean_t:.1f}, STD: {std_t:.1f}, P5: {p5_t:.1f}, Success: {sr_t:.2f}")
-
-    with open(TEST_LOG_PATH, "w", newline="") as test_log:
-        test_writer = csv.writer(test_log)
-        test_writer.writerow(["env", "mean_reward", "std_reward", "5th_percentile", "success_rate"])
-        test_writer.writerow(["source", mean_s, std_s, p5_s, sr_s])
-        test_writer.writerow(["target", mean_t, std_t, p5_t, sr_t])
-
 
 # -------------------- Entry Point -------------------- #
 if __name__ == '__main__':
