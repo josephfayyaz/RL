@@ -17,7 +17,7 @@ device = "cuda" #if torch.cuda.is_available() else "cpu"
 # -------------------- Configuration -------------------- #
 SAVE_INTERVAL = 200000
 MODEL_SAVE_DIR = "../../models/reinforce_vanilla/"
-TRAIN_LOG_PATH = "../../Logs/vanilla/training_Reinforce_vanilla_target_5M.csv"
+TRAIN_LOG_PATH = "../../Logs/vanilla/training_Reinforce_vanilla_source_5M.csv"
 FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_reinforce_vanilla_source_5M.mdl")
 
 # -------------------- Evaluation Function -------------------- #
@@ -38,6 +38,7 @@ def evaluate_agent_on_env(env, agent, episodes, threshold):
     p5_r = np.percentile(returns, 5)
     success_rate = sum(r >= threshold for r in returns) / len(returns)
     return mean_r, std_r, p5_r, success_rate, returns
+
 
 # -------------------- Training Loop -------------------- #
 def main():
@@ -88,18 +89,22 @@ def main():
 
             # Checkpoint at fixed intervals (even during episode)
             if global_timesteps >= next_save_step:
-                ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_reinforce_vanilla_step_{global_timesteps}.mdl")
+                ckpt_path = os.path.join(MODEL_SAVE_DIR, f"model_reinforce_vanilla_source_step_{global_timesteps}.mdl")
                 torch.save(agent.policy.state_dict(), ckpt_path)
                 print(f"📦 Checkpoint saved to {ckpt_path}")
                 next_save_step += SAVE_INTERVAL
 
             if done:
+                # Estimate entropy from saved log_probs
                 entropies = [-lp.item() for lp in agent.action_log_probs]
                 entropy = np.mean(entropies)
+
+                # Policy update
                 policy_loss = agent.update_policy() or 0.0
 
                 total_rewards.append(train_reward)
 
+                # Log first time reaching threshold
                 if train_reward >= config["success_threshold"] and not reached_1000:
                     reached_1000 = True
                     steps_to_1000 = global_timesteps
@@ -128,6 +133,7 @@ def main():
     torch.save(agent.policy.state_dict(), FINAL_MODEL_PATH)
     print(f"✅ Final model saved to {FINAL_MODEL_PATH}")
 
+    # End training
     end = timer()
     print(f"⏱ Training completed in {end - start:.2f} seconds")
 
