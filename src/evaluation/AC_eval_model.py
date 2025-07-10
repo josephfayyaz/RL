@@ -16,15 +16,15 @@ from agents.agent_ac import Agent_ac as Agent, Policy_ac as Policy
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str, default='/home/joseph/python-proj/udr_ES/models/actor_critic/model_actor_critic_source_6.mdl',
+    parser.add_argument('--model_path', type=str, default='/home/joseph/python-proj/udr_ES/models/actor_critic/model_actor_critic_source_8_5M.mdl',
                         help='Path to the saved actor-critic model (.mdl)')
-    parser.add_argument('--domain', type=str, default='target',
-                        choices=['-source-v0', 'cdr', 'udr', 'target'], help='Environment domain to evaluate on')
+    parser.add_argument('--domain', type=str, default='source',
+                        choices=['source', 'cdr', 'udr', 'target'], help='Environment domain to evaluate on')
     parser.add_argument('--seed', type=int, default=0, help='Random seed for reproducibility')
     parser.add_argument('--n_eval_episodes', type=int, default=50, help='Number of evaluation episodes')
     parser.add_argument('--algorithm', type=str, default='AC', choices=['AC'], help='Algorithm name for logging')
     parser.add_argument('--entropy_sched', type=bool, default=False, help='Whether entropy scheduling was used')
-    parser.add_argument('--log_path', type=str, default='../../Logs/AC_eval/', help='Folder to save evaluation logs')
+    parser.add_argument('--log_path', type=str, default='../../Logs/AC_eval_2/', help='Folder to save evaluation logs')
     return parser.parse_args()
 
 
