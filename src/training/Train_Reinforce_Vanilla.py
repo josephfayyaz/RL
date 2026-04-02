@@ -5,20 +5,22 @@ import torch
 import numpy as np
 from timeit import default_timer as timer
 import gym
+from pathlib import Path
 
 # Include parent directory in path for custom imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from src.env.custom_hopper import *  # Custom MuJoCo Hopper environments
 from src.agents.agent_reinforce_normal import Agent, Policy  # REINFORCE agent without baseline
+from project_paths import LOGS_DIR, MODELS_DIR
 
 # -------------------- Device Setup -------------------- #
-device = "cuda" #if torch.cuda.is_available() else "cpu"
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # -------------------- Configuration -------------------- #
 SAVE_INTERVAL = 200000
-MODEL_SAVE_DIR = "../../models/reinforce_vanilla/"
-TRAIN_LOG_PATH = "../../Logs/vanilla/training_Reinforce_vanilla_source_5M.csv"
-FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_reinforce_vanilla_source_5M.mdl")
+MODEL_SAVE_DIR = MODELS_DIR / "reinforce_vanilla"
+TRAIN_LOG_PATH = LOGS_DIR / "vanilla" / "training_Reinforce_vanilla_source_5M.csv"
+FINAL_MODEL_PATH = MODEL_SAVE_DIR / "model_reinforce_vanilla_source_5M.mdl"
 
 # -------------------- Evaluation Function -------------------- #
 def evaluate_agent_on_env(env, agent, episodes, threshold):
@@ -52,7 +54,7 @@ def main():
     }
 
     # Setup
-    os.makedirs("../../Logs/vanilla", exist_ok=True)
+    os.makedirs(LOGS_DIR / "vanilla", exist_ok=True)
     os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
 
     env = gym.make(config["env_id_source"])

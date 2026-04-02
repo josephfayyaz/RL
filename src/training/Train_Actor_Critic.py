@@ -6,21 +6,24 @@ import torch
 import numpy as np
 from timeit import default_timer as timer
 import gym
+from pathlib import Path
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from agents.agent_ac import Agent_ac, Policy_ac
 from env.custom_hopper import *
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from project_paths import LOGS_DIR, MODELS_DIR
 
 # -------------------- Device Setup -------------------- #
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(f'Training on {torch.cuda.get_device_name(torch.cuda.current_device())}' if torch.cuda.is_available() else 'Training on CPU')
 
 # -------------------- Configuration -------------------- #
-CHECKPOINT_PATH = "../../models/actor_critic/checkpoint/checkpoint.pth"
-MODEL_SAVE_DIR = "../../models/actor_critic/"
-FINAL_MODEL_PATH = os.path.join(MODEL_SAVE_DIR, "model_actor_critic_source_8_5M.mdl")
-LOG_CSV_PATH = "../../Logs/actor_critic/training_source_actor_critic_upgraded_8.csv"
-TEST_LOG_PATH = "../../Logs/actor_critic/test_source_log_8.csv"
+CHECKPOINT_PATH = MODELS_DIR / "actor_critic" / "checkpoint" / "checkpoint.pth"
+MODEL_SAVE_DIR = MODELS_DIR / "actor_critic"
+FINAL_MODEL_PATH = MODEL_SAVE_DIR / "model_actor_critic_source_8_5M.mdl"
+LOG_CSV_PATH = LOGS_DIR / "actor_critic" / "training_source_actor_critic_upgraded_8.csv"
+TEST_LOG_PATH = LOGS_DIR / "actor_critic" / "test_source_target_log_8.csv"
 SAVE_INTERVAL = 200000  # Every 500k timesteps
 
 # -------------------- Helper Functions -------------------- #
@@ -64,11 +67,12 @@ def evaluate_agent_on_env(env, agent, episodes, success_threshold):
 def main():
     os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
     os.makedirs(os.path.dirname(LOG_CSV_PATH), exist_ok=True)
+    os.makedirs(CHECKPOINT_PATH.parent, exist_ok=True)
 
     config = {
         "total_timesteps": 5000000,
         "env_id_source": "CustomHopper-source-v0",
-        "env_id_target": "CustomHopper-source-v0",
+        "env_id_target": "CustomHopper-target-v0",
         "test_episodes": 50,
         "success_threshold": 1000
     }

@@ -7,16 +7,19 @@ import csv
 import numpy as np
 from datetime import datetime
 import random
+from pathlib import Path
 
 # Import from parent directories
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from env.custom_hopper import CustomHopper
 from agents.agent_ac import Agent_ac as Agent, Policy_ac as Policy
+from project_paths import LOGS_DIR, MODELS_DIR
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str, default='/home/joseph/python-proj/udr_ES/models/actor_critic/model_actor_critic_source_8_5M.mdl',
+    parser.add_argument('--model_path', type=str, default=str(MODELS_DIR / 'actor_critic' / 'model_actor_critic_source_8_5M.mdl'),
                         help='Path to the saved actor-critic model (.mdl)')
     parser.add_argument('--domain', type=str, default='source',
                         choices=['source', 'cdr', 'udr', 'target'], help='Environment domain to evaluate on')
@@ -24,7 +27,7 @@ def parse_args():
     parser.add_argument('--n_eval_episodes', type=int, default=50, help='Number of evaluation episodes')
     parser.add_argument('--algorithm', type=str, default='AC', choices=['AC'], help='Algorithm name for logging')
     parser.add_argument('--entropy_sched', type=bool, default=False, help='Whether entropy scheduling was used')
-    parser.add_argument('--log_path', type=str, default='../../Logs/AC_eval_2/', help='Folder to save evaluation logs')
+    parser.add_argument('--log_path', type=str, default=str(LOGS_DIR / 'AC_eval_5M'), help='Folder to save evaluation logs')
     return parser.parse_args()
 
 

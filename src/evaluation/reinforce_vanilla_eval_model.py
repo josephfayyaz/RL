@@ -7,15 +7,17 @@ import csv
 import numpy as np
 from datetime import datetime
 import random
+from pathlib import Path
 
 # Include parent directory in path for custom imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from src.env.custom_hopper import *  # Custom MuJoCo Hopper environments
 from src.agents.agent_reinforce_normal import Agent, Policy  # REINFORCE agent without baseline
+from project_paths import LOGS_DIR, MODELS_DIR
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str, default='/home/parastoo/Desktop/new_yousef/RL/models/reinforce_vanilla/model_reinforce_vanilla_source_1M.mdl',
+    parser.add_argument('--model_path', type=str, default=str(MODELS_DIR / 'reinforce_vanilla' / 'model_reinforce_vanilla_source_1M.mdl'),
                         help='Path to the saved reinforce-vanilla model (.mdl)')
     parser.add_argument('--domain', type=str, default='target',
                         choices=['source', 'cdr', 'udr', 'target'], help='Environment domain to evaluate on')
@@ -23,7 +25,7 @@ def parse_args():
     parser.add_argument('--n_eval_episodes', type=int, default=50, help='Number of evaluation episodes')
     parser.add_argument('--algorithm', type=str, default='reinforce-vanilla', choices=['reinforce-vanilla'], help='Algorithm name for logging')
     parser.add_argument('--entropy_sched', type=bool, default=False, help='Whether entropy scheduling was used')
-    parser.add_argument('--log_path', type=str, default='../../Logs/reinforce-vanilla_eval/', help='Folder to save evaluation logs')
+    parser.add_argument('--log_path', type=str, default=str(LOGS_DIR / 'reinforce-vanilla_eval'), help='Folder to save evaluation logs')
     return parser.parse_args()
 
 

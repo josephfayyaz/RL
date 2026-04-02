@@ -1,7 +1,14 @@
-import pandas as pd
-import numpy as np
+import argparse
+import os
+import sys
+from pathlib import Path
+
 import matplotlib.pyplot as plt
-import argparse, os
+import numpy as np
+import pandas as pd
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from project_paths import FIGURES_DIR, LOGS_DIR
 
 def average_seed_curves(files):
     all_curves = []
@@ -86,13 +93,14 @@ def main(args):
     print(auc_df.to_string(index=False))
 
     # Optionally save it
-    auc_df.to_csv(os.path.join(r".\Logs\PPO_robustness", "auc_scores.csv"), index=False)
-    print(r"✅ Saved to: .\Logs\PPO_robustness\auc_scores.csv")
+    auc_path = Path(args.dirrobus) / "auc_scores.csv"
+    auc_df.to_csv(auc_path, index=False)
+    print(f"✅ Saved to: {auc_path}")
     plot_robustness(curves, valid_labels, args.title, args.output, args.y_limit)
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--dirrobus", type=str,
-                   default=r"D:\rl\RL-Final\Logs\PPO_robustness",
+                   default=str(LOGS_DIR / "PPO_robustness"),
                    help="Directory containing CSVs")
     p.add_argument("--labels", nargs='+',
                    default=["PPO_ES", "PPO", "PPO_cdr_ES", "PPO_cdr", "PPO_UDR_ES", "PPO_UDR"],
@@ -104,7 +112,7 @@ if __name__ == "__main__":
                    default="Robustness Curve",
                    help="Title of the plot")
     p.add_argument("--output", type=str,
-                   default="./render/plots",
+                   default=str(FIGURES_DIR / "main_plot"),
                    help="Directory to save plots")
     p.add_argument("--y_limit", type=int,
                    default=None,

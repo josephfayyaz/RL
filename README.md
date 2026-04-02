@@ -1,215 +1,154 @@
-# 🦿 Reinforcement Learning for Custom Hopper with Domain Randomization
+# RL: Sample-Efficient Sim-to-Sim Transfer for MuJoCo Hopper
 
-his repository presents a comprehensive study on **reinforcement learning (RL)** algorithms applied to a **custom MuJoCo Hopper** environment. The project aims to build robust locomotion policies under uncertain dynamics using:
+This repository contains a reinforcement learning research project on robust locomotion transfer in a custom MuJoCo Hopper environment. The work studies how curriculum-based mass randomization and entropy control improve transfer performance when the evaluation robot differs from the training robot by a 30% torso-mass shift.
 
-- Classic Policy Gradient Methods: REINFORCE, Actor-Critic
-- Advanced On-Policy Algorithms: Proximal Policy Optimization (PPO)
-- Robustness Techniques: Domain Randomization (UDR), Curriculum Learning (CDR), Entropy Scheduling (ES)
+The project compares classical policy-gradient baselines with PPO-based transfer strategies and shows that PPO + Curriculum Domain Randomization (CDR) + Entropy Scheduling (ES) delivers the strongest combination of sample efficiency and robustness.
 
+![Hopper locomotion demo](docs/figures/hopper_animation.gif)
 
-## 🎥 Hopper Locomotion Policy Demo
+## Highlights
 
-<div align="center">
-  <a href="https://youtu.be/TYBzPKied9g" target="_blank">
-    <img src="render/plots/hopper_animation.gif" 
-         alt="Watch the Hopper PPO + CDR + ES demo on YouTube" width="400"/>
-  </a>
-  <br/>
-  <strong>Click to watch the full 15-second demo</strong>
-</div>
+- Investigates sim-to-sim transfer under a controlled dynamics gap in MuJoCo Hopper.
+- Benchmarks REINFORCE, REINFORCE with baseline, Actor-Critic, vanilla PPO, UDR, CDR, ES, UDR+ES, and CDR+ES.
+- Uses a custom Hopper environment with domain-specific body-mass perturbations.
+- Includes training scripts, evaluation scripts, stored experiment artifacts, result figures, and the final project report.
 
----
+## Key Findings
 
-## 📁 Repository Structure
+- PPO + CDR + ES crosses the 5k-return mark in roughly `3.2e5` environment steps.
+- Averaged across three seeds, PPO + CDR + ES improves cumulative return by `72%` relative to vanilla PPO.
+- The same configuration achieves more than `4x` the cumulative return of PPO with uniform domain randomization.
+- Classical policy-gradient baselines learn quickly at first but plateau well below the best PPO transfer variant.
 
-```bash
-.
-├── src/                              # Core code (Python package)
-│   ├── agents/                       # RL algorithm implementations
-│   ├── env/                          # Custom MuJoCo-Hopper wrappers
-│   ├── evaluation/                   # Metrics, plotting, helper scripts
-│   └── training/                     # Training entry-points & configs
-│
-├── Logs/                             # Raw tensorboard/CSV logs
-│   ├── Learning_Curve/               #  ⇢ learning-curve CSVs
-│   ├── PPO_episode_rewards/          #  ⇢ per-episode returns
-│   ├── PPO_robustness/               #  ⇢ domain-randomisation runs
-│   ├── PPO_runtime_tmp/              #  ⇢ scratch & tmp logs
-│   ├── actor_critic/                 #  ⇢ AC experiments
-│   └── baseline/                     #  ⇢ REINFORCE baseline runs
-│
-├── models/                          
-│   ├── PPO/
-│   ├── actor_critic/
-│   └── reinforce_baseline/
-│
-├── render/                           # Visual outputs (GIF/MP4/PNG)
-│   └── plots/
-│
-├── requirements.txt                  # Python dependencies
-├── README.md                         # You are here 👋
-├── __init__.py                       # Makes repo import-able (`import rl_master`)
-├── .idea/                            # IDE settings  (⇢ add to .gitignore)
-└── __pycache__/                      # Byte-code cache (auto-generated)
+## Repository Layout
 
-
+```text
+RL/
+├── artifacts/
+│   ├── logs/                 # Experiment CSV logs and evaluation outputs
+│   └── models/               # Saved checkpoints and trained policies
+├── docs/
+│   ├── figures/              # Demo GIFs, plots, robustness curves, comparison charts
+│   └── report/               # Final PDF report
+├── src/
+│   ├── agents/               # REINFORCE and Actor-Critic implementations
+│   ├── env/                  # Custom MuJoCo Hopper environment
+│   ├── evaluation/           # Evaluation, plotting, and visualization scripts
+│   └── training/             # Training entry points and PPO sweep script
+├── project_paths.py          # Centralized project path definitions
+├── requirements.txt          # Minimal runtime dependencies
+└── README.md
 ```
----
 
-## 🧪 Environments & Randomization
+## Methods
 
-The environment is based on a custom subclass of the MuJoCo Hopper (`custom_hopper.py`), extended with:
+### Environment Setup
 
-- **Parameter Randomization**: friction, damping, body mass, initial state
-- **Domain Randomization**:
-  - *Uniform DR (UDR)*: randomized every episode
-  - *Curriculum DR (ES-CDR)*: difficulty scaled with agent performance and return entropy
+- Source domain: Hopper with a 30% lighter torso mass.
+- Target domain: evaluation under the original target dynamics.
+- UDR: uniform mass randomization during training.
+- CDR: progressively widened mass ranges during training.
+- ES: entropy annealing to reduce exploration noise as training stabilizes.
 
----
+### Algorithms
 
-## 🧠 Algorithms Implemented
+- `REINFORCE`
+- `REINFORCE + baseline`
+- `Actor-Critic`
+- `PPO`
+- `PPO + UDR`
+- `PPO + CDR`
+- `PPO + ES`
+- `PPO + UDR + ES`
+- `PPO + CDR + ES`
 
-| Algorithm              | Description                                                         |
-|------------------------|---------------------------------------------------------------------|
-| **REINFORCE**           | Monte Carlo policy gradient with optional baseline                 |
-| **Actor-Critic**        | TD-based policy/value method                                       |
-| **PPO**                 | Clipped surrogate objective with GAE (Stable-Baselines3)           |
-| **UDR**                 | Domain variation with uniform sampling                             |
-| **ES-CDR**              | Return entropy-driven difficulty adjustment                        |
+## Quick Start
 
----
-
-
-## ⚙️ Environment Setup
-
-Install the required packages:
+### 1. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-You’ll need MuJoCo 2.1+ properly installed and licensed. Refer to:
-👉 https://github.com/openai/mujoco-py#install-mujoco
+### 2. Install MuJoCo
 
----
+This project depends on `mujoco-py` and a local MuJoCo 2.1 installation. Follow the official setup guide from the `mujoco-py` project for your operating system before running training or evaluation scripts.
 
-## 🧪 Training
-
-From the root directory, run:
+### 3. Run training
 
 ```bash
 # REINFORCE
-python src/training/Train_Reinforce_vanila.py
+python src/training/Train_Reinforce_Vanilla.py
 
 # REINFORCE with baseline
-python src/training/Train_Baseline.py
+python src/training/Train_Reinforce_Baseline.py
 
 # Actor-Critic
 python src/training/Train_Actor_Critic.py
 
-# PPO + UDR + ES-CDR
-python src/training/PPO_UDR_ES_CDR.py --Domain cdr --Entropy_Scheduling True --seed 0
+# PPO + CDR + ES
+python src/training/Train_PPO_UDR_ES_CDR.py --domain cdr --entropy-scheduling true --seed 0
 ```
 
----
+### 4. Run evaluation
 
-## 🔬 Hyperparameter Optimization
+```bash
+# PPO evaluation on the target domain
+python src/evaluation/PPO_eval_model.py \
+  --model_path artifacts/models/PPO/cdr_es/PPO_cdr_ES_True_seed_42_CustomHopper_cdr_v0_5000000.zip \
+  --domain target \
+  --entropy-scheduling true
+
+# Observation-noise robustness curve
+python src/evaluation/robustnesscurve_csv_extraction.py \
+  --model-path artifacts/models/PPO/cdr_es/PPO_cdr_ES_True_seed_42_CustomHopper_cdr_v0_5000000.zip \
+  --algorithm-label PPO_CDR_ES_seed_42 \
+  --domain target
+
+# Aggregate plots
+python src/evaluation/learning_curve_plot_UDR.py
+python src/evaluation/generate_auc_plots.py
+```
+
+### 5. Run the PPO hyperparameter sweep
 
 ```bash
 python src/training/PPO_Hyperparameter_Calculation.py
 ```
 
-You can adjust sweep parameters via JSON or inline config.
+The sweep writes the best PPO configuration to `artifacts/models/PPO/best_hyperparameters.json`.
 
----
+## Documentation Map
 
-## 📊 Logging & Visualization
+- Main report: `docs/report/main_report.pdf`
+- Demo GIF: `docs/figures/hopper_animation.gif`
+- Summary comparison grid: `docs/figures/main_plot/all_metrics_grid.png`
+- Learning curves: `docs/figures/ppo_learning_curves_source_target_gap_seeds_0_14_42.png`
+- Robustness AUC comparison: `docs/figures/robustness_auc_comparison.png`
+- Legacy exploratory plotting scripts kept for traceability: `src/evaluation/legacy_plotting/`
 
-Training metrics (returns, entropy, etc.) are saved as CSV in the `Logs/` directory.
+## What Is Included
 
-To plot results:
+- Reproducible training entry points for classical RL baselines and PPO variants.
+- Stored checkpoints and experiment logs for representative runs.
+- Figure assets ready for reports, presentations, and portfolio use.
+- Final paper/report documenting motivation, methodology, experiments, and conclusions.
 
-```bash
-python evaluation/plot_csv_scripts/plot_metrics.py
-```
+## Keywords
 
-Or use the built-in metric utilities in `src/evaluation`.
+Reinforcement Learning, Proximal Policy Optimization, PPO, Sim-to-Sim Transfer, Sim-to-Real Motivation, Domain Randomization, Curriculum Learning, Entropy Scheduling, MuJoCo, Hopper, Robotics, Control, Policy Gradient, Transfer Learning, Robust RL
 
----
+## Suggested GitHub Topics
 
-## 🤖 Custom Environment
+`reinforcement-learning` `ppo` `mujoco` `domain-randomization` `curriculum-learning` `sim-to-real` `transfer-learning` `robotics`
 
-Implemented in `src/env/custom_hopper.py`, our environment introduces:
+## Hashtags
 
-- Dynamic randomization of:
-  - Mass, friction, damping, init pose
-- UDR: Resampled every episode
-- CDR + ES: Difficulty increases based on policy performance and entropy
+#ReinforcementLearning #PPO #MuJoCo #DomainRandomization #CurriculumLearning #EntropyScheduling #TransferLearning #Robotics #Sim2Real #Sim2Sim
 
----
+## Team
 
-## 🧠 PPO + Curriculum Domain Randomization (CDR) + Entropy Scheduling (ES)
-
-This project extends PPO with **adaptive training difficulty** using:
-
-### 🔁 Curriculum Domain Randomization (CDR)
-CDR gradually increases the range of domain parameters (e.g., torso mass, friction) during training, helping the agent:
-- First master simple dynamics.
-- Then adapt to complex, realistic scenarios.
-
-Use it with:
-```bash
---Domain cdr
-```
-
-### 📉 Entropy Scheduling (ES)
-ES monitors the **policy’s return entropy**. When the agent is confident (low entropy), it:
-- Advances the curriculum level.
-- Makes the environment harder.
-
-Enable it with:
-```bash
---Entropy_Scheduling True
-```
-
-### 🧪 Example PPO + CDR + ES Command
-```bash
-python src/training/PPO_UDR_ES_CDR.py --Domain cdr --Entropy_Scheduling True --seed 0
-```
-
----
-
-## 📈 Sample Results
-
-| Level | Mean Return | Std Dev | Return Entropy |
-|-------|-------------|---------|----------------|
-| 1     | 820         | ±50     | 1.02           |
-| 2     | 710         | ±70     | 1.30           |
-| 3     | 665         | ±85     | 1.48           |
-
----
----
-
-## 📚 References & Acknowledgements
-
-- OpenAI Baselines
-- Stable-Baselines3 Docs
-- MuJoCo Documentation
-
----
-
-## 🧠 Future Directions
-
-- Add evaluation over unseen dynamics
-- Experiment with off-policy algorithms (e.g., SAC, DDPG)
-- Integrate video rendering and performance visualizations
-
----
-
-## 📬 Contact
-
-Please reach out via GitHub issues or Linkedin profiles. 
-- **Ali Vaezi** - [LinkedIn](https://www.linkedin.com/in/aliivaezii/)
-- **Yousef Fayyaz** - [LinkedIn](https://www.linkedin.com/in/yousef-fayyaz-55ab9a255/)
-- **Sajjad Shahali** - [LinkedIn](https://www.linkedin.com/in/sajjad-shahali/)
-- **Parastoo Hashemi Alvar** - [LinkedIn](https://www.linkedin.com/in/parastoo-hashemi/)
+- Ali Vaezi
+- Yousef Fayyaz
+- Sajjad Shahali Ramsheh
+- Parastoo Hashemi Alvar

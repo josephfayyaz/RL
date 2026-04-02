@@ -17,6 +17,7 @@ import torch
 import json
 import shutil
 import multiprocessing
+from pathlib import Path
 from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import CheckpointCallback, EvalCallback, BaseCallback
 from stable_baselines3.common.monitor import Monitor
@@ -25,17 +26,30 @@ from stable_baselines3.common.evaluation import evaluate_policy
 
 # Allow importing from parent directory (e.g., to access custom environments)
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from env.custom_hopper import *  # Import custom MuJoCo Hopper environment
+from project_paths import LOGS_DIR, MODELS_DIR
 
 # -------------------- Argument Parser -------------------- #
+def str2bool(value):
+    if isinstance(value, bool):
+        return value
+    value = value.lower()
+    if value in {"true", "1", "yes", "y"}:
+        return True
+    if value in {"false", "0", "no", "n"}:
+        return False
+    raise argparse.ArgumentTypeError("Expected a boolean value: true/false")
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--n-episodes', default=1_000_000, type=int)  # Total training timesteps
+    parser.add_argument('--n-episodes', '--timesteps', dest='n_episodes', default=1_000_000, type=int)  # Total training timesteps
     parser.add_argument('--print-every', default=100, type=int)  # Print frequency
     parser.add_argument('--device', default='cuda', type=str)  # Device to use
     parser.add_argument('--algorithm', default='PPO', type=str, choices=['PPO'])  # Algorithm (only PPO here)
-    parser.add_argument("--Domain", default="source", choices=["source", "cdr", "udr"])  # Domain type
-    parser.add_argument('--Entropy_Scheduling', default=False, type=bool, choices=[True, False])  # Entropy flag
+    parser.add_argument('--domain', '--Domain', dest='domain', default='source', choices=['source', 'cdr', 'udr'])  # Domain type
+    parser.add_argument('--entropy-scheduling', '--Entropy_Scheduling', dest='entropy_scheduling', default=False, type=str2bool)  # Entropy flag
     parser.add_argument('--seed', default=[0, 14, 42], type=int, nargs="+")  # Seeds to train on
     parser.add_argument('--n_envs', default=8, type=int)  # Number of parallel environments
     return parser.parse_args()
@@ -50,14 +64,22 @@ device = 'cuda:0' if args.device == 'cuda' and torch.cuda.is_available() else 'c
 print(f"training on {torch.cuda.get_device_name(torch.cuda.current_device())}" if torch.cuda.is_available() else "training on cpu")
 
 # Paths and logging directories
-HP_PATH = "../../models/PPO/best_hyperparameters.json"
-ENV_ID = f'{args.Domain}-v0'  # Custom environment ID
+HP_PATH = MODELS_DIR / "PPO" / "best_hyperparameters.json"
+ENV_ID = f'CustomHopper-{args.domain}-v0'  # Custom environment ID
 EVAL_ENV = 'CustomHopper-source-v0'  # Evaluation always on source domain
-SAVE_PATH = '../../models/PPO/task/'
-LOG_PATH = '../../Logs/PPO_episode_rewards/src_src/'
-CHECKPOINT_PATH = '../../models/PPO/checkpoints/'
+PPO_MODELS_DIR = MODELS_DIR / "PPO"
+SAVE_SUBDIR = (
+    "vanilla" if args.domain == "source"
+    else "cdr_es" if args.domain == "cdr" and args.entropy_scheduling
+    else "cdr" if args.domain == "cdr"
+    else "udr_es" if args.domain == "udr" and args.entropy_scheduling
+    else "udr"
+)
+SAVE_PATH = PPO_MODELS_DIR / SAVE_SUBDIR
+LOG_PATH = LOGS_DIR / "PPO_episode_rewards"
+CHECKPOINT_PATH = PPO_MODELS_DIR / "checkpoints"
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-USE_entropy_scheduler = args.Entropy_Scheduling
+USE_entropy_scheduler = args.entropy_scheduling
 seeds = args.seed
 
 # -------------------- Callback: Per-Episode Reward Logging -------------------- #
@@ -87,7 +109,7 @@ def load_best_hyperparameters(path):
 # -------------------- Env Factory for SubprocVecEnv -------------------- #
 def make_env(env_id, seed, rank):
     def _init():
-        env = CustomHopper(domain=args.Domain, total_timesteps=Total_timesteps)
+        env = CustomHopper(domain=args.domain, total_timesteps=Total_timesteps)
         env.seed(seed + rank)
         env.action_space.seed(seed + rank)
         env.observation_space.seed(seed + rank)
@@ -164,7 +186,7 @@ def train_agent(algo, env_id, eval_env_id, USE_entropy_scheduler, total_timestep
 
     learning_curve_cb = LearningCurveCallback(
         eval_env=eval_env,
-        csv_path=f"../../Logs/Learning_Curve/learning_curve_{algo}_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{seed}_{total_timesteps}.csv",
+        csv_path=LOGS_DIR / "Learning_Curve" / f"learning_curve_{algo}_{args.domain}_ES_{args.entropy_scheduling}_seed_{seed}_{total_timesteps}.csv",
         eval_interval=5000,
         n_eval_episodes=5,
         verbose=1
@@ -175,7 +197,7 @@ def train_agent(algo, env_id, eval_env_id, USE_entropy_scheduler, total_timestep
         best_model_save_path=save_path,
         log_path=log_path,
         eval_freq=10**9 // args.n_envs,
-        prefix=f"EVAL_BEST_{algo}_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{seed}",
+        prefix=f"EVAL_BEST_{algo}_{args.domain}_ES_{args.entropy_scheduling}_seed_{seed}",
         n_eval_episodes=10,
         deterministic=True,
         verbose=1
@@ -196,7 +218,7 @@ def train_agent(algo, env_id, eval_env_id, USE_entropy_scheduler, total_timestep
     model.learn(total_timesteps=total_timesteps, callback=callbacks)
 
     # Save the trained model
-    modelpath = os.path.join(save_path, f"{algo}_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{seed}_({env_id}_{eval_env_id})_{total_timesteps}")
+    modelpath = os.path.join(save_path, f"{algo}_{args.domain}_ES_{args.entropy_scheduling}_seed_{seed}_({env_id}_{eval_env_id})_{total_timesteps}")
     model.save(modelpath)
     print(f"Model saved to {modelpath}")
 
@@ -204,6 +226,8 @@ def train_agent(algo, env_id, eval_env_id, USE_entropy_scheduler, total_timestep
 def main():
     os.makedirs(SAVE_PATH, exist_ok=True)
     os.makedirs(LOG_PATH, exist_ok=True)
+    os.makedirs(CHECKPOINT_PATH, exist_ok=True)
+    os.makedirs(LOGS_DIR / "Learning_Curve", exist_ok=True)
 
     for run_seed in seeds:
         print(f"=== Running experiment with seed={run_seed} ===")
@@ -213,10 +237,10 @@ def main():
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(run_seed)
 
-        envname = args.Domain
+        envname = args.domain
         evalenvname = "source"
-        csv_filename = os.path.join(LOG_PATH, f"{args.algorithm}_{args.Domain}_ES_{args.Entropy_Scheduling}_seed_{run_seed}_{Total_timesteps}({envname},{evalenvname}).csv")
-        train_agent(args.algorithm, ENV_ID, EVAL_ENV, args.Entropy_Scheduling, Total_timesteps, SAVE_PATH, LOG_PATH, run_seed, csv_filename)
+        csv_filename = os.path.join(LOG_PATH, f"{args.algorithm}_{args.domain}_ES_{args.entropy_scheduling}_seed_{run_seed}_{Total_timesteps}({envname},{evalenvname}).csv")
+        train_agent(args.algorithm, ENV_ID, EVAL_ENV, args.entropy_scheduling, Total_timesteps, SAVE_PATH, LOG_PATH, run_seed, csv_filename)
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()

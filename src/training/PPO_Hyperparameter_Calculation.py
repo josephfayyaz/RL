@@ -14,18 +14,21 @@ from stable_baselines3.common.callbacks import CheckpointCallback, BaseCallback
 from stable_baselines3.common.vec_env import SubprocVecEnv
 import wandb
 import sys
+from pathlib import Path
 
 # Add parent directory to Python path so that 'src.env.custom_hopper' can be imported
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 import src.env.custom_hopper  # Custom MuJoCo Hopper environment (must be implemented correctly)
+from project_paths import LOGS_DIR, MODELS_DIR
 
 # ------------------ Configuration ------------------ #
 ENV_TRAIN = 'CustomHopper-source-v0'
 ENV_TEST = 'CustomHopper-source-v0'
 SEEDS = [0, 14, 42]  # Multiple seeds for robustness across different training runs
 TOTAL_TIMESTEPS = 350_000  # Total training steps per run
-SAVE_HP_PATH = "../../models/PPO/best_hyperparameters.json"  # Where to store the best found hyperparameters
-LOG_CSV = "../../Logs/PPO_sweep/ppo_hyperparam_sweep_source_eval.csv"  # Logging path for sweep results
+SAVE_HP_PATH = MODELS_DIR / "PPO" / "best_hyperparameters.json"  # Where to store the best found hyperparameters
+LOG_CSV = LOGS_DIR / "PPO_sweep" / "ppo_hyperparam_sweep_source_eval.csv"  # Logging path for sweep results
 WANDB_PROJECT = "ppo_sweep_ss"  # WandB project name
 
 # ------------------ Sweep Configuration for wandb ------------------ #
@@ -44,8 +47,8 @@ sweep_config = {
 
 # ------------------ Logging Directories ------------------ #
 # Create directories if they don't exist
-os.makedirs("Logs", exist_ok=True)
-os.makedirs("modelsPPO", exist_ok=True)
+os.makedirs(LOG_CSV.parent, exist_ok=True)
+os.makedirs(SAVE_HP_PATH.parent, exist_ok=True)
 
 # If CSV doesn't exist, initialize it with header
 if not os.path.exists(LOG_CSV):

@@ -11,21 +11,35 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.evaluation import evaluate_policy
 from datetime import datetime
 import random
+from pathlib import Path
 
 # Allow import from parent directory (custom_hopper)
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from env.custom_hopper import CustomHopper
+from project_paths import LOGS_DIR, MODELS_DIR
+
+
+def str2bool(value):
+    if isinstance(value, bool):
+        return value
+    value = value.lower()
+    if value in {"true", "1", "yes", "y"}:
+        return True
+    if value in {"false", "0", "no", "n"}:
+        return False
+    raise argparse.ArgumentTypeError("Expected a boolean value: true/false")
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str, default='/home/joseph/python-proj/udr_ES/models/PPO/vanila/PPO_source_ES_False_seed_0_CustomHopper_source_v0_5000000.zip', help='Path to the saved PPO model (.zip)')
-    parser.add_argument('--domain', type=str, default='-target-v0', choices=['-source-v0', 'cdr', 'udr','target'], help='Environment domain to evaluate on')
+    parser.add_argument('--model_path', type=str, default=str(MODELS_DIR / 'PPO' / 'vanilla' / 'PPO_source_ES_False_seed_0_CustomHopper_source_v0_5000000.zip'), help='Path to the saved PPO model (.zip)')
+    parser.add_argument('--domain', type=str, default='target', choices=['source', 'cdr', 'udr', 'target'], help='Environment domain to evaluate on')
     parser.add_argument('--seed', type=int, default=0, help='Random seed for reproducibility')
     parser.add_argument('--n_eval_episodes', type=int, default=50, help='Number of evaluation episodes')
     parser.add_argument('--algorithm', type=str, default='PPO', choices=['PPO'], help='Algorithm used (for naming consistency)')
-    parser.add_argument('--entropy_sched', type=bool, default=False, help='Whether entropy scheduling was used')
-    parser.add_argument('--log_path', type=str, default='../../Logs/PPO_eval/', help='Folder to save evaluation CSV logs')
+    parser.add_argument('--entropy_sched', '--entropy-scheduling', dest='entropy_sched', type=str2bool, default=False, help='Whether entropy scheduling was used')
+    parser.add_argument('--log_path', type=str, default=str(LOGS_DIR / 'PPO_eval'), help='Folder to save evaluation CSV logs')
 
     return parser.parse_args()
 
