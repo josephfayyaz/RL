@@ -2,7 +2,7 @@
 
 This repository contains a reinforcement learning research project on robust locomotion transfer in a custom MuJoCo Hopper environment. The work studies how curriculum-based mass randomization and entropy control improve transfer performance when the evaluation robot differs from the training robot by a 30% torso-mass shift.
 
-The project compares classical policy-gradient baselines with PPO-based transfer strategies and shows that PPO + Curriculum Domain Randomization (CDR) + Entropy Scheduling (ES) delivers the strongest combination of sample efficiency and robustness.
+The project compares classical policy-gradient baselines with PPO-based transfer strategies and shows that PPO + Curriculum Domain Randomization (CDR) + Entropy Scheduling (ES) delivers the strongest combination of sample efficiency and robustness .
 
 ![Hopper locomotion demo](docs/figures/hopper_animation.gif)
 
